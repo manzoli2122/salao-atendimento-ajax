@@ -1,24 +1,23 @@
-@extends( Config::get('app.templateMaster' , 'templates.templateMaster')  )
-
-@section( Config::get('app.templateMasterContentTitulo' , 'titulo-page')  )			
-		Editar Cliente
-@endsection
-    
-@section( Config::get('app.templateMasterContent' , 'content')  )
-
-<div class="col-md-12">
-    <div class="box box-success">
-        <form method="post" action="{{route('clientes.update', $model->id)}}">            
-            {{csrf_field()}}
-            <input name="_method" type="hidden" value="PATCH">
-            @include('atendimento::clientes._form', ['model' => $model])
-            <div class="box-footer align-right">
-                <a class="btn btn-default" href="{{ route('clientes.index') }}">
-                    <i class="fa fa-reply"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salvar</button>
+<section class="content-header">
+        <h1>
+            <span id="div-titulo-pagina">Editar Cliente</span>
+        </h1>
+    </section>            
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-success" id="div-box">
+                    <form method="post" action="{{route('clientes.ajax.update', $model->id)}}" id="form-model">            
+                        {{csrf_field()}}
+                        <input name="_method" type="hidden" value="PATCH">
+                        @include('atendimentoAjax::clientes._form')
+                    </form>
+                    
+                    <div class="box-footer align-right">  
+                        <button type="button" class="btn btn-default"  onclick="modelVoltarIndex()" > <i class="fa fa-reply"></i> Voltar </button> 
+                        <button class="btn btn-success" onclick="modelUpdateAjax( {{$model->id}}  , '{{ route('clientes.ajax.index') }}' )" ><i class="fa fa-check"></i> Salvar</button>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
-@endsection
+        </div>
+    </section>

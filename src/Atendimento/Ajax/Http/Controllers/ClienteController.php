@@ -85,7 +85,7 @@ class ClienteController extends DataTableJsonController
 
 
 
-
+/*
     public function update( Request $request, $id){
         $this->validate($request , $this->model->rules($id));        
         $dataForm = $request->all();                      
@@ -111,7 +111,7 @@ class ClienteController extends DataTableJsonController
             return redirect()->route("{$this->route}.edit" , ['id'=> $id])->withErrors(['errors' =>'Erro no Editar'])->withInput();
         }
     }
-    
+    */
 
 
     
