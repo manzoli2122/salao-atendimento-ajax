@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use DB;
+
 class Pagamento extends Model
 {
     use SoftDeletes;
@@ -41,25 +42,25 @@ class Pagamento extends Model
 
     public function atendimento()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Atendimento', 'atendimento_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'atendimento_id');
     }
 
 
     public function atendimento_da_quitacao()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Atendimento', 'atendimento_quitacao_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'atendimento_quitacao_id');
     }
 
 
     public function operadora()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Cadastro\Models\Operadora', 'operadora_id');
+        return $this->belongsTo('Manzoli2122\Salao\Cadastro\Ajax\Models\Operadora', 'operadora_id');
     }
 
 
     public function cliente()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Cliente', 'cliente_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
     }
 
 

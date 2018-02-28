@@ -5,6 +5,7 @@ namespace Manzoli2122\Salao\Atendimento\Ajax\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
+
 class ProdutosVendidos extends Model
 {    
     use SoftDeletes ;
@@ -32,17 +33,17 @@ class ProdutosVendidos extends Model
     
     public function cliente()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Cliente', 'cliente_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
     }
 
     public function atendimento()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Atendimento', 'atendimento_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'atendimento_id');
     }
 
     public function produto()
     {
-        return $this->belongsTo('Manzoli2122\Salao\Cadastro\Models\Produto', 'produto_id');
+        return $this->belongsTo('Manzoli2122\Salao\Cadastro\Ajax\Models\Produto', 'produto_id');
     }
 
 

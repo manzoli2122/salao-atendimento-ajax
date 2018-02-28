@@ -4,7 +4,7 @@ namespace Manzoli2122\Salao\Atendimento\Ajax\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Manzoli2122\Salao\Atendimento\Models\Pagamento;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento;
 use Config;
 
 use DB ; 
@@ -13,15 +13,13 @@ class Atendimento extends Model
 {
     use SoftDeletes;
     
-    public function newInstance($attributes = [], $exists = false)
-    {
+    public function newInstance($attributes = [], $exists = false){
         $model = parent::newInstance($attributes, $exists);    
         $model->setTable($this->getTable());    
         return $model;
     }
 
-    public function getTable()
-    {
+    public function getTable(){
         return  Config::get('atendimento.atendimentos_table' , 'atendimentos') ; 
     }
 
@@ -37,18 +35,17 @@ class Atendimento extends Model
     ];
 
 
-    public function cliente()
-    {
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Models\Cliente', 'cliente_id');
+    public function cliente(){
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
     }
 
     public function servicos()
     {     
         if($this->deleted_at){
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\AtendimentoFuncionario', 'atendimento_id')->onlyTrashed();
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\AtendimentoFuncionario', 'atendimento_id')->onlyTrashed();
         } 
         else {
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\AtendimentoFuncionario', 'atendimento_id');
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\AtendimentoFuncionario', 'atendimento_id');
         }   
         
     }
@@ -56,10 +53,10 @@ class Atendimento extends Model
     public function pagamentos()
     {      
         if($this->deleted_at){
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_id')->onlyTrashed();
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'atendimento_id')->onlyTrashed();
         } 
         else {
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_id');
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'atendimento_id');
         }
     }
 
@@ -67,10 +64,10 @@ class Atendimento extends Model
     public function produtos()
     {       
         if($this->deleted_at){
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\ProdutosVendidos', 'atendimento_id')->onlyTrashed();
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\ProdutosVendidos', 'atendimento_id')->onlyTrashed();
         } 
         else {
-            return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\ProdutosVendidos', 'atendimento_id');
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\ProdutosVendidos', 'atendimento_id');
         }
         
     }
@@ -84,7 +81,7 @@ class Atendimento extends Model
     public function pagamentosFiadosQuitados()
     {        
         //dd( $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_id')->whereNotNull('deleted_at')->where('formaPagamento','fiado')->whereNotNull('atendimento_quitacao_id') );
-        return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_id')->withTrashed()->whereNotNull('deleted_at')->where('formaPagamento','fiado')->whereNotNull('atendimento_quitacao_id');
+        return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'atendimento_id')->withTrashed()->whereNotNull('deleted_at')->where('formaPagamento','fiado')->whereNotNull('atendimento_quitacao_id');
         //return Pagamento::where('formaPagamento', 'fiado')->where('atendimento_id', $this->id)->onlyTrashed()->whereNotNull('atendimento_quitacao_id')->get();
     }
 
@@ -98,7 +95,7 @@ class Atendimento extends Model
 
     public function pagamentosQuitadosAqui()
     {        
-        return  $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_quitacao_id')->withTrashed()->where('formaPagamento','fiado')->whereNotNull('deleted_at') ;  //->onlyTrashed();
+        return  $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'atendimento_quitacao_id')->withTrashed()->where('formaPagamento','fiado')->whereNotNull('deleted_at') ;  //->onlyTrashed();
         //return  $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Pagamento', 'atendimento_quitacao_id')->where('formaPagamento','fiado')->onlyTrashed();
     }
 

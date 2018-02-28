@@ -2,7 +2,7 @@
 
 namespace Manzoli2122\Salao\Atendimento\Ajax\Models;
 
-use Manzoli2122\Salao\Atendimento\Models\Funcionario;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Funcionario;
 use Illuminate\Database\Eloquent\Builder;
 use DB;
 // AQUI USA DEPENDENCIA CRUZADA

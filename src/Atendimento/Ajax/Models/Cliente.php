@@ -61,13 +61,13 @@ class Cliente extends Model
 
     public function atendimentos()
     {        
-        return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc');
+        return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc');
     }
 
 
     public function atendimentosLast()
     {        
-        return $this->hasMany('Manzoli2122\Salao\Atendimento\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc')->take(6);
+        return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc')->take(6);
     }
 
 

@@ -5,6 +5,7 @@ namespace Manzoli2122\Salao\Atendimento\Ajax\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
+
 class Funcionario extends Model 
 {
 
