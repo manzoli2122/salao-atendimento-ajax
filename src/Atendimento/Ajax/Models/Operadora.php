@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Config;
 use DB;
 
 class Operadora extends Model implements DataTableJson
-{
+{ 
     use SoftDeletes;
 
 
