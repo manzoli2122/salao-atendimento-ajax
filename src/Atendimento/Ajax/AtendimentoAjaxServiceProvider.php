@@ -4,21 +4,21 @@ namespace Manzoli2122\Salao\Cadastro\Ajax;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
-class CadastroAjaxServiceProvider extends ServiceProvider
+class AtendimentoAjaxServiceProvider extends ServiceProvider
 {
 
 
     protected $defer = false;
-    protected $namespace = 'Manzoli2122\Salao\Cadastro\Ajax\Http\Controllers'  ;
+    protected $namespace = 'Manzoli2122\Salao\Atendimento\Ajax\Http\Controllers'  ;
     
     public function boot()
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../../config/config.php' =>  config_path('cadastroAjax.php'), 
-        ], 'cadastroAjax_config');
+            __DIR__.'/../../config/config.php' =>  config_path('atendimentoAjax.php'), 
+        ], 'atendimentoAjax_config');
         $this->mapWebRoutes();     
-        $this->loadViewsFrom(__DIR__.'/Views', 'cadastroAjax');
+        $this->loadViewsFrom(__DIR__.'/Views', 'atendimentoAjax');
     }
 
 
@@ -43,7 +43,7 @@ class CadastroAjaxServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/config.php', 'cadastroAjax'
+            __DIR__.'/../../config/config.php', 'atendimentoAjax'
         );
     }
 
