@@ -1,6 +1,6 @@
 <?php
 
-namespace Manzoli2122\Salao\Cadastro\Ajax;
+namespace Manzoli2122\Salao\Atendimento\Ajax;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
