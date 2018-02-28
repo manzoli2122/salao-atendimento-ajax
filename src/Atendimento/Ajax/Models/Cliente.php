@@ -7,21 +7,38 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 use DB;
 
-class Cliente extends Model
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+use Manzoli2122\Pacotes\Contracts\Models\DataTableJson;
+
+class Cliente extends Model implements DataTableJson
 {
-    public function newInstance($attributes = [], $exists = false)
-    {
+
+
+    use SoftDeletes;
+
+
+    public function newInstance($attributes = [], $exists = false){
         $model = parent::newInstance($attributes, $exists);    
         $model->setTable($this->getTable());    
         return $model;
     }
 
-    public function getTable()
-    {
+
+    public function getTable(){
         return Config::get('atendimento.cliente_table' , 'users') ;
     }
 
     
+
+    public function findModelJson($id){
+        return $this->find($id);
+    }
+
+    public function findModelSoftDeleteJson($id){
+        return $this->onlyTrashed()->find($id);
+    }
+
 
     protected $fillable = [
         'name', 'email',  'image' , 'endereco', 'ativo' , 'apelido' , 'nascimento' , 'celular', 'telefone' , 'password'

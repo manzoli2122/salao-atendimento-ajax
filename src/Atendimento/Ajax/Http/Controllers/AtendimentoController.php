@@ -1,6 +1,6 @@
 <?php
 
-namespace Manzoli2122\Salao\Atendimento\Http\Controllers;
+namespace Manzoli2122\Salao\Atendimento\Ajax\Http\Controllers;
 
 use Manzoli2122\Salao\Atendimento\Models\Atendimento;
 use Manzoli2122\Salao\Atendimento\Models\Pagamento;

@@ -1,22 +1,23 @@
 <?php
 
-namespace Manzoli2122\Salao\Atendimento\Http\Controllers;
+namespace Manzoli2122\Salao\Atendimento\Ajax\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Manzoli2122\Salao\Atendimento\Models\Cliente;
-use Manzoli2122\Salao\Cadastro\Http\Controllers\Padroes\StandardAtivoController ;
 use DataTables;
 use ChannelLog as Log;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente;
 
-class ClienteController extends StandardAtivoController
+use Manzoli2122\Pacotes\Http\Controller\DataTable\Json\DataTableJsonController ;
+
+
+class ClienteController extends DataTableJsonController
 {
+
     
     protected $model;    
     protected $name = "Cliente";    
-    protected $view = "atendimento::clientes";  
-    protected $view_apagados = "atendimento::clientes.apagados";  
-    protected $route = "clientes";
-   
+    protected $view = "atendimentoAjax::clientes";  
+    protected $route = "clientes.ajax";
     protected $logCannel;
 
 
@@ -36,6 +37,26 @@ class ClienteController extends StandardAtivoController
 
    
    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function store(Request $request){
         $this->validate($request , $this->model->rules());
         $dataForm = $request->all();              
@@ -112,6 +133,7 @@ class ClienteController extends StandardAtivoController
                                                        
                             . '<a href="'.route("{$this->route}.show", $linha->id).'" class="btn btn-primary btn btn-sm" style="margin-bottom:0px; margin-top: 0px; margin-left: 15px;" title="Visualizar" target="_blank" > <i class="fa fa-search fa-lg"></i> </a>'
                             
+                            . '<button data-id="'.$linha->id.'" type="button" class="btn btn-primary btn-xs btn-datatable" btn-show    title="Visualizar" style="margin-left: 10px;"> <i class="fa fa-search"></i> </button>'
                            
                             ;
                     })
