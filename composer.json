@@ -1,0 +1,33 @@
+{
+    "name": "manzoli2122/salao-cadastro-ajax",
+    "description": "Pacote Laravel",
+    "keywords": ["laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bruno Manzoli do Nascimento",
+            "email": "manzoli2122@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",          
+        "manzoli2122/opensource": "dev-master"
+    },
+    
+    "autoload": {
+        
+        "psr-4": {
+            "Manzoli2122\\Salao\\Cadastro\\Ajax\\": "src/Cadastro/Ajax"
+        }
+    },
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Manzoli2122\\Salao\\Cadastro\\Ajax\\CadastroAjaxServiceProvider"
+            ]
+            
+        }
+    },
+    "minimum-stability": "dev"
+    
+}
