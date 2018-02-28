@@ -1,5 +1,5 @@
 {
-    "name": "manzoli2122/salao-cadastro-ajax",
+    "name": "manzoli2122/salao-atendimento-ajax",
     "description": "Pacote Laravel",
     "keywords": ["laravel"],
     "license": "MIT",
@@ -11,19 +11,20 @@
     ],
     "require": {
         "php": ">=7.0.0",          
-        "manzoli2122/opensource": "dev-master"
+        "manzoli2122/opensource": "dev-master",
+        "manzoli2122/salao-cadastro-ajax": "dev-master"
     },
     
     "autoload": {
         
         "psr-4": {
-            "Manzoli2122\\Salao\\Cadastro\\Ajax\\": "src/Cadastro/Ajax"
+            "Manzoli2122\\Salao\\Atendimento\\Ajax\\": "src/Atendimento/Ajax"
         }
     },
     "extra":{
         "laravel":{
             "providers":[
-                "Manzoli2122\\Salao\\Cadastro\\Ajax\\CadastroAjaxServiceProvider"
+                "Manzoli2122\\Salao\\Atendimento\\Ajax\\AtendimentoAjaxServiceProvider"
             ]
             
         }
