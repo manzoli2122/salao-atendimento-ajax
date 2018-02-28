@@ -105,7 +105,8 @@ class Cliente extends Model implements DataTableJson
     
     public function getDatatable() {
         $teste =DB::table('users')
-        ->where('ativo', 1)       
+        ->where('ativo', 1) 
+        ->whereNull('users.deleted_at')      
         ->groupBy('id' , 'name')
 
         ->leftJoin('pagamentos', function ($join) {

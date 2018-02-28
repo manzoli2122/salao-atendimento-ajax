@@ -97,19 +97,3 @@
 
 
 @endpush
-
-
-@push( Config::get('app.templateMasterCss' , 'css')  )			
-	<style type="text/css">
-		.btn-group-sm>.btn, .btn-sm {
-			padding: 1px 10px;
-			font-size: 15px;		
-		}
-		.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-			padding: 4.8px;
-		}
-		label {			
-			 margin-bottom: 1px; 
-		}
-	</style>
-@endpush
