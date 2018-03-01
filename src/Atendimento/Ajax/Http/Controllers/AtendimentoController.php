@@ -36,8 +36,8 @@ class AtendimentoController extends Controller
     protected $produtosVendidos_temp;
     protected $produtosVendidos;
     protected $name = "Atendimento";
-    protected $view = "atendimento::atendimentos";
-    protected $route = "atendimentos";
+    protected $view = "atendimentoAjax::atendimentos";
+    protected $route = "atendimentos.ajax";
 
     protected $logCannel = 'atendimento' ;
     

@@ -33,7 +33,9 @@
     </section>
 
     <section class=" text-center atendimentos"> 
-        <div class="col-12 col-sm-4 servicos" style="margin-bottom:10px;">           
+        <div class="col-12 col-sm-4 servicos" style="margin-bottom:10px;" id="todos-servicos">  
+            
+            
             @forelse($atendimento->servicos as $servico) 
                 <div class="row">        
                     <div class="col-md-12">
@@ -168,9 +170,9 @@
     </section>
 
                     
-    @include('atendimento::atendimentos.produtoModal') 
-    @include('atendimento::atendimentos.servicoModal')                
-    @include('atendimento::atendimentos.pagamentoModal')
+    @include('atendimentoAjax::atendimentos.produtoModal') 
+    @include('atendimentoAjax::atendimentos.servicoModal')                
+    @include('atendimentoAjax::atendimentos.pagamentoModal')
 
 @endsection
   
@@ -180,6 +182,92 @@
 
     
 <script>
+
+
+        var servicos = [];
+
+
+        function AdicionarServico() {  
+            
+            var novoServico = {};
+            
+            var elements = document.forms["form-servico"].querySelectorAll( "input, select, textarea" );
+			for( var i = 0; i < elements.length; ++i ) {
+				var element = elements[i];
+				var name = element.name;
+				var value = element.value;	
+				if( name ) {
+					novoServico[ name ] = value;
+				}
+            }
+            
+            if(novoServico.servico_id == ''){
+                alert('Serviço nao selecionado');
+            }
+
+
+            if(novoServico.funcionario_id == ''){
+                alert('Funcionario nao selecionado');
+            }
+
+
+
+            
+            
+
+
+
+            servicos.push(novoServico);
+
+            var html = '';
+            for(i in servicos) {           
+                var item = servicos[i];
+
+
+
+                html = html + '<div class="row"> ';       
+                html = html + '     <div class="col-md-12">';
+                html = html + '         <div class="box box-success">';
+                html = html + '             <div class="box-header with-border">';
+                html = html + '                 <h3 class="box-title">' + item.servico_id + '</h3>';
+                html = html + '                 <div class="box-tools pull-right">';
+                html = html + '                     <a class="btn btn-box-tool" href="#"><i class="fa fa-times"></i> </a>';                            
+                html = html + '                 </div>  ';                          
+                html = html + '             </div>   ';                     
+                html = html + '             <div class="box-body">    ';                           
+                html = html + '                 <div class="direct-chat-msg">';
+                html = html + '                     <div class="direct-chat-info clearfix">  ';                             
+                html = html + '                         <span class="pull-right">Funcionário: ' + item.funcionario_id + '</span>';
+                html = html + '                         <span class="pull-left">R$ ' + item.valor_servico_unitario + ' / Unid.</span>';
+                html = html + '                     </div>';
+                html = html + '                     <div class="direct-chat-info clearfix"> ';                              
+                html = html + '                         <span class="pull-left"> quant.: ' + item.quantidade + ' </span>';
+                html = html + '                         <span class="pull-right badge bg-green"> Total R$  ' + item.valor_servico_total + ' </span>';
+                html = html + '                     </div>';
+                html = html + '                  </div>';
+                html = html + '              </div>';
+                html = html + '         </div>';
+                html = html + '     </div>   ';    
+                html = html + '</div>';
+
+
+                //html = html + JSON.stringify( item ) ;
+                console.log(JSON.stringify( item ));
+            }
+
+            document.getElementById("todos-servicos").innerHTML = html  ;
+
+
+
+            //console.log(servicos);
+
+            
+        }
+
+
+
+
+
         //--------------------------------------------------------------------------------------------------------------------------------------
         //      COMBO BOX DO PRODUTO
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -447,8 +535,8 @@
                     var valor_total = valor_unitario * quantidade;  
                     console.log('iniciou servico , quantidade: ' + quantidade + ', desconto_maximo ' + desconto_maximo 
                     + ', valor: ' + valor + ', acrescimo: ' + acrescimo + ', valor_unitario: ' + valor_unitario + ', valor_total: ' + valor_total   );        
-                    form["valor-servico-unitario"].value = valor_unitario;
-                    form["valor-servico-total"].value = valor_total;
+                    form["valor_servico_unitario"].value = valor_unitario;
+                    form["valor_servico_total"].value = valor_total;
                 },
 
                 
@@ -459,8 +547,8 @@
                     form["acrescimo"].max = 0 ;                      
                     form["desconto"].value = 0.0;                           
                     form["acrescimo"].value = 0.0;                            
-                    form["valor-servico-unitario"].value =  0.0 ;
-                    form["valor-servico-total"].value =  0.0 ;
+                    form["valor_servico_unitario"].value =  0.0 ;
+                    form["valor_servico_total"].value =  0.0 ;
                 },
 
 
@@ -545,8 +633,8 @@
                 var valor_total = valor_unitario * quantidade; 
                 console.log('iniciou servico , quantidade: ' + quantidade + ', desconto_maximo ' + desconto_maximo 
                 + ', valor: ' + valor + ', acrescimo: ' + acrescimo + ', valor_unitario: ' + valor_unitario + ', valor_total: ' + valor_total   );          
-                form["valor-servico-unitario"].value = valor_unitario;
-                form["valor-servico-total"].value = valor_total;
+                form["valor_servico_unitario"].value = valor_unitario;
+                form["valor_servico_total"].value = valor_total;
 
 
 

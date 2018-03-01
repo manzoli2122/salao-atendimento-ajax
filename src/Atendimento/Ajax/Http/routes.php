@@ -47,16 +47,16 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
 
 
-    //Route::get('atendimentos/cancelar/{id}', 'AtendimentoController@cancelar')->name('atendimentos.cancelar');
-    //Route::post('atendimentos/finalizar/{id}', 'AtendimentoController@finalizar')->name('atendimentos.finalizar');
-    //Route::get('atendimentos/cadastrar/{id}', 'AtendimentoController@adicionarItens_temp')->name('atendimentos.adicionarItens');
-    //Route::post('atendimentos/cadastrar/servico', 'AtendimentoController@adicionarServico')->name('atendimentos.adicionarServico');
-    //Route::get('atendimentos/remover/servico/{id}', 'AtendimentoController@removerServico')->name('atendimentos.removerServico');
-    //Route::post('atendimentos/cadastrar/pagamento', 'AtendimentoController@adicionarPagamento')->name('atendimentos.adicionarPagamento');
-    //Route::get('atendimentos/remover/pagamento/{id}', 'AtendimentoController@removerPagamento')->name('atendimentos.removerPagamento');
-    //Route::post('atendimentos/cadastrar/produto', 'AtendimentoController@adicionarProduto')->name('atendimentos.adicionarProduto');
-    //Route::get('atendimentos/remover/produto/{id}', 'AtendimentoController@removerProduto')->name('atendimentos.removerProduto');
-    //Route::post('atendimentos/{id}/alterar/data', 'AtendimentoController@alterarData')->name('atendimentos.alterarData');
+    //Route::get('atendimentos/cancelar/{id}', 'AtendimentoController@cancelar')->name('atendimentos.ajax.cancelar');
+    //Route::post('atendimentos/finalizar/{id}', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
+    Route::get('atendimentos/cadastrar/{id}', 'AtendimentoController@adicionarItens_temp')->name('atendimentos.ajax.adicionarItens');
+    //Route::post('atendimentos/cadastrar/servico', 'AtendimentoController@adicionarServico')->name('atendimentos.ajax.adicionarServico');
+    //Route::get('atendimentos/remover/servico/{id}', 'AtendimentoController@removerServico')->name('atendimentos.ajax.removerServico');
+    //Route::post('atendimentos/cadastrar/pagamento', 'AtendimentoController@adicionarPagamento')->name('atendimentos.ajax.adicionarPagamento');
+    //Route::get('atendimentos/remover/pagamento/{id}', 'AtendimentoController@removerPagamento')->name('atendimentos.ajax.removerPagamento');
+    //Route::post('atendimentos/cadastrar/produto', 'AtendimentoController@adicionarProduto')->name('atendimentos.ajax.adicionarProduto');
+    //Route::get('atendimentos/remover/produto/{id}', 'AtendimentoController@removerProduto')->name('atendimentos.ajax.removerProduto');
+    //Route::post('atendimentos/{id}/alterar/data', 'AtendimentoController@alterarData')->name('atendimentos.ajax.alterarData');
     
 
 /*

@@ -127,7 +127,7 @@ class Cliente extends Model implements DataTableJson
     
     public function getDatatableApagados()
     {
-        return $this->inativo()->select(['id', 'name',  ]);        
+        return $this->onlyTrashed()->select(['id', 'name',  ]);        
     }
     
 }

@@ -6,7 +6,7 @@
                 <h4 class="modal-title">Adicionar Serviço</h4>
             </div>
             <div class="modal-body">                     
-                <form id="form-servico" name="form-servico" method="POST" action="{{route('atendimentos.adicionarServico')}}"  class="form form-search form-ds form-servico ui-front">
+                <form id="form-servico" id="form-servico" name="form-servico" method="POST" action="{{route('atendimentos.adicionarServico')}}"  class="form form-search form-ds form-servico ui-front">
                     {{csrf_field()}}              
                     <input name="atendimento_id" value="{{ $atendimento->id }}" type="hidden">
                     
@@ -57,11 +57,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="valor-servico-unitario">Valor Unitário</label>
-                                <input disabled="" class="form-control col-2" step="0.01" name="valor-servico-unitario" value="0.0" type="number">
+                                <input disabled="" class="form-control col-2" step="0.01" name="valor_servico_unitario" value="0.0" type="number">
                             </div>
                             <div class="form-group">
                                 <label for="valor-servico-total">Valor Total</label>
-                                <input disabled="" class="form-control" step="0.01" name="valor-servico-total" value="0.0" type="number">
+                                <input disabled="" class="form-control" step="0.01" name="valor_servico_total" value="0.0" type="number">
                             </div>
                         </div>
                     </div>
@@ -71,12 +71,20 @@
                         </div>
                         <div class="col-6 col-md-6 ml-auto">
                             <div class="form-group align-right">
+                                
+                                
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-right:60px;" >Fechar</button>
+                                
                                 <input type="submit" value="Enviar" class="btn btn-success">
+                            
                             </div>
                         </div>
                     </div>                            
-                </form>    
+                </form>  
+                
+                <button class="btn btn-success" onclick="AdicionarServico()" ><i class="fa fa-check"></i> Adicionar Serviço </button>
+
+                
             </div>           
         </div>
     </div>
