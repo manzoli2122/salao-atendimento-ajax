@@ -2,18 +2,18 @@
 
 namespace Manzoli2122\Salao\Atendimento\Ajax\Http\Controllers;
 
-use Manzoli2122\Salao\Atendimento\Models\Atendimento;
-use Manzoli2122\Salao\Atendimento\Models\Pagamento;
-use Manzoli2122\Salao\Atendimento\Models\AtendimentoFuncionario;
-use Manzoli2122\Salao\Atendimento\Models\ProdutosVendidos;
-use Manzoli2122\Salao\Atendimento\Models\Cliente;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\AtendimentoFuncionario;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\ProdutosVendidos;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente;
+use  Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ServicoValorException;
+use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ProdutoValorException;
+use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\PagamentoValorException;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Caixa;
 
-use Manzoli2122\Salao\Atendimento\Models\Caixa;
 
-use Manzoli2122\Salao\Atendimento\Models\Temp\Atendimento_temp;
-use Manzoli2122\Salao\Atendimento\Models\Temp\Pagamento_temp;
-use Manzoli2122\Salao\Atendimento\Models\Temp\AtendimentoFuncionario_temp;
-use Manzoli2122\Salao\Atendimento\Models\Temp\ProdutosVendidos_temp;
+
 
 use Manzoli2122\Salao\Cadastro\Http\Controllers\Padroes\Controller ;
 use Carbon\Carbon;
@@ -22,18 +22,17 @@ use ChannelLog as Log;
 use Session;
 use Auth;
 
-class AtendimentoController extends Controller
-{
+
+
+
+
+class AtendimentoController extends Controller  {
 
     protected $totalPage = 35;
 
     protected $model;
-    protected $model_temp;
     protected $pagamento;
     protected $atendimentoFuncionario;
-    protected $pagamento_temp;
-    protected $atendimentoFuncionario_temp;
-    protected $produtosVendidos_temp;
     protected $produtosVendidos;
     protected $name = "Atendimento";
     protected $view = "atendimentoAjax::atendimentos";
@@ -42,18 +41,12 @@ class AtendimentoController extends Controller
     protected $logCannel = 'atendimento' ;
     
 
-    public function __construct(Pagamento $pagamento , Atendimento $atendimento  , Pagamento_temp $pagamento_temp ,
-                                AtendimentoFuncionario $atendimentoFuncionario , Atendimento_temp $atend_temp ,
-                                AtendimentoFuncionario_temp $atendimentoFuncionario_temp , 
-                                ProdutosVendidos_temp $produtosVendidos_temp, ProdutosVendidos $produtosVendidos ){
+    public function __construct(Pagamento $pagamento , Atendimento $atendimento, AtendimentoFuncionario $atendimentoFuncionario , 
+                                 ProdutosVendidos $produtosVendidos ){
 
         $this->model = $atendimento;
-        $this->model_temp = $atend_temp;
         $this->pagamento = $pagamento;
         $this->atendimentoFuncionario = $atendimentoFuncionario;
-        $this->pagamento_temp = $pagamento_temp;
-        $this->atendimentoFuncionario_temp = $atendimentoFuncionario_temp;
-        $this->produtosVendidos_temp = $produtosVendidos_temp;
         $this->produtosVendidos = $produtosVendidos;
         $this->middleware('auth');
 
@@ -65,6 +58,144 @@ class AtendimentoController extends Controller
 
     }
     
+
+
+
+
+    public function create($id){
+        $cliente = Cliente::find($id);      
+        return view("{$this->view}.create", compact('cliente'));
+    }
+
+    
+
+
+    
+
+    public function finalizar(Request $request){
+                 
+        try{
+            $servicos = $this->validarServicos( json_decode( $request->input('_servicos') ) );
+        }
+        catch( ServicoValorException $e ){
+            return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
+        }
+
+
+        try{
+            $produtos = $this->validarProdutos( json_decode( $request->input('_produtos') ) );
+        }
+        catch( ProdutoValorException $e ){
+            return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
+        }
+
+
+        try{
+            $pagamentos = $this->validarPagamentos( json_decode( $request->input('_pagamentos') ) );
+        }
+        catch( PagamentoValorException $e ){
+            return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
+        }
+
+
+        dd($servicos);
+        
+        
+
+
+        return response()->json(['erro' => false , 'msg' => 'ok' , 'data' => null ], 200);
+    }
+
+
+
+
+
+
+
+
+
+    private function validarServicos( $servicosJson ){        
+        $servicos = collect([]);        
+        foreach ($servicosJson as $value) {
+            $array = [
+                'valor' => $value->valor_servico_total,
+                'cliente_id' => $value->cliente_id,
+                'funcionario_id' => $value->funcionario_id,
+                'servico_id' => $value->servico_id,
+                'quantidade' => $value->quantidade,
+                'acrescimo' => $value->acrescimo,
+                'valor_unitario' => $value->valor_servico_unitario,
+                'desconto' => $value->desconto,
+            ];
+            $atendimentoFuncionario = new AtendimentoFuncionario($array) ;
+            $atendimentoFuncionario->validate();
+            $servicos->push( $atendimentoFuncionario );           
+        }
+        return $servicos ;
+    }
+
+
+
+    private function validarProdutos( $produtosJson ){  
+        $produtos = collect([]);
+        foreach ($produtosJson as $value) {
+            $array = [
+                'valor' => $value->valor_produto_total,
+                'cliente_id' => $value->cliente_id,                
+                'produto_id' => $value->produto_id,
+                'quantidade' => $value->quantidade,
+                'acrescimo' => $value->acrescimo,
+                'valor_unitario' => $value->valor_produto_unitario,
+                'desconto' => $value->desconto,
+            ];            
+            $produtosVendidos = new ProdutosVendidos($array) ;
+            $produtosVendidos->validate();
+            $produtos->push( $produtosVendidos );            
+        }
+        return $produtos ;
+    }
+
+
+
+
+    private function validarPagamentos( $pagamentosJson ){  
+        $pagamentos = collect([]);
+        foreach ($pagamentosJson as $value) {
+            $array = [
+                'valor' => $value->valor,
+                'cliente_id' => $value->cliente_id,                
+                'parcelas' => $value->parcelas,
+                'operadora_id' => $value->operadora_id,
+                'formaPagamento' => $value->formaPagamento,
+                'bandeira' => $value->bandeira,
+                'observacoes' => $value->observacoes,
+            ];    
+            $pagamento_temp = new Pagamento($array) ;
+            $pagamento_temp->validate();
+            $pagamentos->push( $pagamento_temp  );  
+        }
+        return $pagamentos ;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function index(){       
         $caixa = new Caixa;
@@ -184,20 +315,22 @@ class AtendimentoController extends Controller
     }
 
 
-    public function finalizar($id){
+
+   
+
+    public function finalizar123($id){
         $atendimento_old = $this->model_temp->find($id);        
         $atendimento = $this->model->create( $atendimento_old->toArray() );
 
-        foreach($atendimento_old->servicos as $servico){
-            $array = $servico->toArray();
-            unset($array['id']);
-            $array['atendimento_id'] = $atendimento->id;
-            $array['valor'] = $servico->valor() ; 
-            $array['valor_unitario'] = $servico->servico->valor; 
-            $array['porcentagem_funcionario'] = $servico->servico->porcentagem_funcionario;     
-                   
-            $this->atendimentoFuncionario->create( $array );
-        }
+        //foreach($atendimento_old->servicos as $servico){
+            //$array = $servico->toArray();
+            //unset($array['id']);
+            //$array['atendimento_id'] = $atendimento->id;
+            //$array['valor'] = $servico->valor() ; 
+            //$array['valor_unitario'] = $servico->servico->valor; 
+            //$array['porcentagem_funcionario'] = $servico->servico->porcentagem_funcionario;  
+            //$this->atendimentoFuncionario->create( $array );
+        //}
 
 
 
@@ -251,6 +384,9 @@ class AtendimentoController extends Controller
 
 
 
+
+
+/*
     public function cancelar($id){
         $atendimento_old = $this->model_temp->find($id); 
         $clienteId = $atendimento_old->cliente_id ;    
@@ -258,11 +394,11 @@ class AtendimentoController extends Controller
         return redirect()->route("{$this->route}.index");
     }
 
+*/
 
 
 
-
- 
+ /*
 
     public function adicionarServico(Request $request){
         $dataForm = $request->all();              
@@ -290,8 +426,9 @@ class AtendimentoController extends Controller
         }
     }
 
+ */
     
-
+/*
 
     public function adicionarPagamento(Request $request) {        
         $dataForm = $request->all();          
@@ -325,11 +462,11 @@ class AtendimentoController extends Controller
     }
 
     
+*/
 
 
 
-
-    
+    /*
 
     public function adicionarProduto(Request $request) {
         $dataForm = $request->all();                 
@@ -356,5 +493,12 @@ class AtendimentoController extends Controller
             return redirect()->route("{$this->route}.adicionarItens" , ['id' => $atendimento->id ]);
         }
     }
+
+
+*/
+
+
+
+
 
 }

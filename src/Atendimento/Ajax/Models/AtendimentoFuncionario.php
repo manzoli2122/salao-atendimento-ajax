@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 
+use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ServicoValorException;
+
 class AtendimentoFuncionario extends Model
 {
     use SoftDeletes;
 
-    public function newInstance($attributes = [], $exists = false)
-    {
+    public function newInstance($attributes = [], $exists = false){
         $model = parent::newInstance($attributes, $exists);    
         $model->setTable($this->getTable());    
         return $model;
@@ -61,6 +62,16 @@ class AtendimentoFuncionario extends Model
 
     public function valorFuncioanrio(){
         return  $this->valor * $this->porcentagem_funcionario / 100 ;        
+    }
+
+
+
+
+    public function validate(){
+        throw_if( $this->valor < 0 , ServicoValorException::class);
+        throw_if( $this->valor != ( $this->quantidade * $this->valor_unitario ) , ServicoValorException::class);
+        $this->valor_unitario =  $this->servico->valor ;
+        $this->porcentagem_funcionario =  $this->servico->porcentagem_funcionario ;
     }
 
 }

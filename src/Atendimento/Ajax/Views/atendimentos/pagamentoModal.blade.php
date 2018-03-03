@@ -1,21 +1,19 @@
-<div class="modal fade" id="pagamentoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="pagamentoModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="width:90%">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Adicionar Pagamento</h4>                
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title text-center"> <b> ADICIONAR PAGAMENTO </b></h2>                
             </div>
             <div class="modal-body">   
-                <form class="form form-search form-ds" method="post" action="{{route('atendimentos.adicionarPagamento')}}" >
-                        {{csrf_field()}}
-                    <input name="atendimento_id" value="{{$atendimento->id}}" type="hidden">
-                    <input name="cliente_id" value="{{$atendimento->cliente->id}}" type="hidden">                 
+                <form id="form-pagamento" name="form-pagamento" class="form form-search form-ds" method="post" action="#" >
+                       
+                    <input name="cliente_id" value="{{$cliente->id}}" type="hidden">                 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="formaPagamento">Pagamento:</label>
-                                <select class="form-control" name="formaPagamento" required onchange="myFunction(this.value)">
+                                <h4><label for="formaPagamento" style="display: block;">FORMA DE PAGAMENTO:</label></h4>
+                                <select class="form-control" name="formaPagamento" required onchange="formaPagamentoDisplay(this.value)">
                                         <option value="">Selecione a forma de pagamento</option>                               
                                         <option value="dinheiro"> Dinheiro  </option>
                                         <option value="Pic Pay"> Pic Pay  </option>
@@ -27,7 +25,7 @@
                                 </select> 
                             </div>
                             <div class="form-group" id="form-operadora" hidden>
-                                <label for="operadora_id">Operadora:</label>
+                                <h4> <label for="operadora_id" style="display: block;">OPERADORA:</label> </h4>
                                 <select class="form-control" id="operadora_id" name="operadora_id" >
                                         <option value="">Selecione o Operadora</option>
                                         @foreach (Manzoli2122\Salao\Cadastro\Models\Operadora::get() as $key )
@@ -36,7 +34,7 @@
                                 </select> 
                             </div>
                             <div class="form-group" id="form-parcelas" hidden>
-                                <label for="parcelas">Parcelas:</label>
+                                <h4><label for="parcelas" style="display: block;">PARCELAS:</label></h4>
                                 <select class="form-control" id="parcelas" name="parcelas" >
                                         <option value="">Selecione as parcelas</option>                               
                                         <option value="1"> 1  </option>
@@ -47,11 +45,11 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group"  >
-                                <label for="valor" class="col-form-label">Valor:</label>
-                                <input placeholder="valor" step="0.01" class="form-control" required="" min="0" max="{{ ($atendimento->valor - $atendimento->valorPagamentos()) }}" name="valor" value="{{($atendimento->valor - $atendimento->valorPagamentos())}}" type="number">
+                                <h4><label for="valor" class="col-form-label" style="display: block;">VALOR:</label></h4>
+                                <input style="color:red; font-size:20px; font-weight: bold;" placeholder="valor" id="valor_pagamento" step="0.01" class="form-control" required="" min="0" name="valor" value="0" type="number">
                             </div>
                             <div class="form-group" id="form-bandeira" hidden>
-                                <label for="bandeira">bandeira:</label>
+                                <h4><label for="bandeira" style="display: block;">BANDEIRA:</label></h4>
                                 <select class="form-control"  id="bandeira" name="bandeira" >
                                         <option value="">Selecione o bandeira</option>
                                         <option value="banescard">  Banescard </option>
@@ -63,24 +61,21 @@
                                 </select> 
                             </div>
                             <div class="form-group">
-                                <label for="observacoes">observacoes:</label>
+                                <h4><label for="observacoes" style="display: block;">OBSERVAÇÕES:</label></h4>
                                 <input placeholder="observacoes" class="form-control" name="observacoes" type="text">                                
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-6 col-md-6">
-                            <!--button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button-->
-                        </div>                        
-                        <div class="col-6 col-md-6 ml-auto">
-                            <div class="form-group align-right">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-right:60px;" >Fechar</button>
-                                <input class="btn btn-success" value="Enviar" type="submit">
-                            </div>
-                        </div>
-                    </div>                          
-                </form>      
+                     
+                </form>
+                <div class="form-group align-right">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-right:60px;" >
+                        <i class="fa fa-times"></i> FECHAR
+                    </button>
+                    <button class="btn btn-success" onclick="AdicionarPagamento()" >
+                        <i class="fa fa-check"></i> ADICIONAR PAGAMENTO 
+                    </button>
+                </div>      
             </div>            
         </div>
     </div>

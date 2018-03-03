@@ -39,23 +39,27 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
 
 
-    Route::get('clientes/{id}/atendendo', 'AtendimentoController@create_temp')->name('clientes.ajax.atender');
+    Route::get('clientes/{id}/atendendo', 'AtendimentoController@create')->name('clientes.ajax.atender');
 
 
 
 
+    Route::resource('atendimentos', 'AtendimentoController' , ['except' => [
+        'create', 'store' , 'edit' , 'update' , 
+    ]] ); 
 
 
 
-    //Route::get('atendimentos/cancelar/{id}', 'AtendimentoController@cancelar')->name('atendimentos.ajax.cancelar');
-    //Route::post('atendimentos/finalizar/{id}', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
+
+    Route::get('atendimentos/cancelar', 'AtendimentoController@cancelar')->name('atendimentos.ajax.cancelar');
+    Route::post('atendimentos/finalizar', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
     Route::get('atendimentos/cadastrar/{id}', 'AtendimentoController@adicionarItens_temp')->name('atendimentos.ajax.adicionarItens');
-    //Route::post('atendimentos/cadastrar/servico', 'AtendimentoController@adicionarServico')->name('atendimentos.ajax.adicionarServico');
-    //Route::get('atendimentos/remover/servico/{id}', 'AtendimentoController@removerServico')->name('atendimentos.ajax.removerServico');
+    Route::post('atendimentos/cadastrar/servico', 'AtendimentoController@adicionarServico')->name('atendimentos.ajax.adicionarServico');
+    Route::get('atendimentos/remover/servico/{id}', 'AtendimentoController@removerServico')->name('atendimentos.ajax.removerServico');
     //Route::post('atendimentos/cadastrar/pagamento', 'AtendimentoController@adicionarPagamento')->name('atendimentos.ajax.adicionarPagamento');
     //Route::get('atendimentos/remover/pagamento/{id}', 'AtendimentoController@removerPagamento')->name('atendimentos.ajax.removerPagamento');
-    //Route::post('atendimentos/cadastrar/produto', 'AtendimentoController@adicionarProduto')->name('atendimentos.ajax.adicionarProduto');
-    //Route::get('atendimentos/remover/produto/{id}', 'AtendimentoController@removerProduto')->name('atendimentos.ajax.removerProduto');
+    Route::post('atendimentos/cadastrar/produto', 'AtendimentoController@adicionarProduto')->name('atendimentos.ajax.adicionarProduto');
+    Route::get('atendimentos/remover/produto/{id}', 'AtendimentoController@removerProduto')->name('atendimentos.ajax.removerProduto');
     //Route::post('atendimentos/{id}/alterar/data', 'AtendimentoController@alterarData')->name('atendimentos.ajax.alterarData');
     
 

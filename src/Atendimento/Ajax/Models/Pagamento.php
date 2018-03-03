@@ -7,19 +7,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use DB;
 
+use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\PagamentoValorException;
+
 class Pagamento extends Model
 {
     use SoftDeletes;
 
-    public function newInstance($attributes = [], $exists = false)
-    {
+    
+    public function newInstance($attributes = [], $exists = false){
         $model = parent::newInstance($attributes, $exists);    
         $model->setTable($this->getTable());    
         return $model;
     }
 
-    public function getTable()
-    {
+
+
+    public function getTable(){
         return  Config::get('atendimento.pagamentos_table' , 'pagamentos') ;  
     }
 
@@ -28,9 +31,10 @@ class Pagamento extends Model
     
     protected $fillable = [
         'valor',  'atendimento_id' , 'compensado' , 'parcelas' , 'operadora_confirm', 'na_conta_at' , 'operadora_id' ,
-         'porcentagem_cartao' , 'operadora_id', 'formaPagamento' , 'caiu_conta' , 'valor_liquido' , 'bandeira' ,
+         'porcentagem_cartao' ,  'formaPagamento' , 'caiu_conta' , 'valor_liquido' , 'bandeira' ,
          'observacoes' , 'cliente_id'
     ];
+
 
 
     protected $dates = [
@@ -40,49 +44,75 @@ class Pagamento extends Model
     ];
 
 
-    public function atendimento()
-    {
+
+    public function atendimento(){
         return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'atendimento_id');
     }
 
 
-    public function atendimento_da_quitacao()
-    {
+
+    public function atendimento_da_quitacao(){
         return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'atendimento_quitacao_id');
     }
 
 
-    public function operadora()
-    {
+
+    public function operadora() {
         return $this->belongsTo('Manzoli2122\Salao\Cadastro\Ajax\Models\Operadora', 'operadora_id');
     }
 
 
-    public function cliente()
-    {
+
+    public function cliente() {
         return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
     }
 
 
 
-    public function getValor()
-    {
+    public function getValor() {
         return "R$ " .  number_format($this->valor, 2 , ',' , '' ) ;
     }
 
-    public function getDatatable()
-    {
+
+
+
+    public function getDatatable(){
         return DB::table('pagamentos_view')->whereNull('deleted_at') //->where('operadora_confirm', false )
          ->select(['id', 'cliente', 'created_at' ,  'valor' , 'formaPagamento', 'bandeira' , 'nome' , 'operadora_confirm' , 'operado', 'caiu_conta', 'na_conta' ]); 
         //return $this->where('operadora_confirm', false )->select(['id',   DB::raw(  " date_format( created_at , '%d-%m-%Y' ) as created_atd" )   ,  'operadora_confirm' , 'formaPagamento' , 
                         //DB::raw(  " concat('R$', ROUND  (valor , 2 ) ) as valor" )   ]);        
     }   
 
-    public function getDatatable1()
-    {
+
+
+
+    public function getDatatable1(){
         return $this->ativo()->select(['id', 'nome',  DB::raw(  " concat('R$', ROUND  (valor , 2 ) ) as valor" )  ,
         'observacoes' , DB::raw(  " concat( desconto_maximo , '%' ) as desconto_maximo" )  ]);        
     }
     
+
+
+
+
+    public function validate(){
+        throw_if( $this->valor < 0 , PagamentoValorException::class);
+        throw_if( $this->invalido_cartao()  , PagamentoValorException::class);        
+        $this->porcentagem_cartao =  $this->operadora->porcentagem_credito  ;
+    }
+
+
+
+
+    private function invalido_cartao(){
+        if( $this->formaPagamento == 'credito' or $this->formaPagamento == 'debito' ){
+            if( $this->bandeira == ''  or $this->operadora_id == ''  ){
+                return true;
+            }            
+        }
+        return false ;
+    }
+
+
 
 }
