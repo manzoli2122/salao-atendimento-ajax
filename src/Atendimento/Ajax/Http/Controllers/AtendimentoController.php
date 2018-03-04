@@ -73,28 +73,39 @@ class AtendimentoController extends Controller  {
     
 
     public function finalizar(Request $request){
-                 
+        $finalizou = false ;     
         try{
-            $servicos = $this->validarServicos( json_decode( $request->input('_servicos') ) );
+
+            $atendimento = $this->model->create( ['cliente_id' => 1 , 'valor' => 0 ] );
+
+            
+            $servicos = $this->validarServicos( json_decode( $request->input('_servicos') ) , $atendimento->id );
+
+            $produtos = $this->validarProdutos( json_decode( $request->input('_produtos') ) , $atendimento->id);
+
+            $pagamentos = $this->validarPagamentos( json_decode( $request->input('_pagamentos') ) , $atendimento->id );
+
+
+
+
+
+
+            $finalizou = true ;
         }
         catch( ServicoValorException $e ){
             return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
         }
-
-
-        try{
-            $produtos = $this->validarProdutos( json_decode( $request->input('_produtos') ) );
-        }
         catch( ProdutoValorException $e ){
             return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
         }
-
-
-        try{
-            $pagamentos = $this->validarPagamentos( json_decode( $request->input('_pagamentos') ) );
-        }
         catch( PagamentoValorException $e ){
             return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
+        }
+        finally {
+            if(!$finalizou){
+                $atendimento->forceDelete();
+                dd('finali');
+            }            
         }
 
 
@@ -114,10 +125,11 @@ class AtendimentoController extends Controller  {
 
 
 
-    private function validarServicos( $servicosJson ){        
+    private function validarServicos( $servicosJson ,  $atendimento_id ){        
         $servicos = collect([]);        
         foreach ($servicosJson as $value) {
             $array = [
+                'atendimento_id' => $atendimento_id ,
                 'valor' => $value->valor_servico_total,
                 'cliente_id' => $value->cliente_id,
                 'funcionario_id' => $value->funcionario_id,
@@ -129,6 +141,7 @@ class AtendimentoController extends Controller  {
             ];
             $atendimentoFuncionario = new AtendimentoFuncionario($array) ;
             $atendimentoFuncionario->validate();
+            $atendimentoFuncionario->save();
             $servicos->push( $atendimentoFuncionario );           
         }
         return $servicos ;
@@ -136,10 +149,11 @@ class AtendimentoController extends Controller  {
 
 
 
-    private function validarProdutos( $produtosJson ){  
+    private function validarProdutos( $produtosJson ,  $atendimento_id ){  
         $produtos = collect([]);
         foreach ($produtosJson as $value) {
             $array = [
+                'atendimento_id' => $atendimento_id ,
                 'valor' => $value->valor_produto_total,
                 'cliente_id' => $value->cliente_id,                
                 'produto_id' => $value->produto_id,
@@ -150,6 +164,7 @@ class AtendimentoController extends Controller  {
             ];            
             $produtosVendidos = new ProdutosVendidos($array) ;
             $produtosVendidos->validate();
+            $produtosVendidos->save();
             $produtos->push( $produtosVendidos );            
         }
         return $produtos ;
@@ -158,10 +173,11 @@ class AtendimentoController extends Controller  {
 
 
 
-    private function validarPagamentos( $pagamentosJson ){  
+    private function validarPagamentos( $pagamentosJson ,  $atendimento_id ){  
         $pagamentos = collect([]);
         foreach ($pagamentosJson as $value) {
             $array = [
+                'atendimento_id' => $atendimento_id ,
                 'valor' => $value->valor,
                 'cliente_id' => $value->cliente_id,                
                 'parcelas' => $value->parcelas,
@@ -172,6 +188,7 @@ class AtendimentoController extends Controller  {
             ];    
             $pagamento_temp = new Pagamento($array) ;
             $pagamento_temp->validate();
+            $pagamento_temp->save();
             $pagamentos->push( $pagamento_temp  );  
         }
         return $pagamentos ;
