@@ -28,8 +28,8 @@
                                 <h4> <label for="operadora_id" style="display: block;">OPERADORA:</label> </h4>
                                 <select class="form-control" id="operadora_id" name="operadora_id" >
                                         <option value="">Selecione o Operadora</option>
-                                        @foreach (Manzoli2122\Salao\Cadastro\Models\Operadora::get() as $key )
-                                        <option value="{{ $key->id }}">  {{ $key->nome }}  </option>
+                                        @foreach ($operadoras as $key )
+                                        <option data-nome="{{$key->nome}}" value="{{ $key->id }}">  {{ $key->nome }}  </option>
                                         @endforeach
                                 </select> 
                             </div>

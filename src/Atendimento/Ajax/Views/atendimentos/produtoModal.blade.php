@@ -15,7 +15,7 @@
                                 <h4><label  for="produto_id" style="display: block;" >Produto:</label></h4>
                                 <select id="produto_id" class="form-control produto_id_select" name="produto_id" required style="width: 100%"> 
                                         <option    value="">Selecione o Produto</option>                                      
-                                        @foreach (Manzoli2122\Salao\Cadastro\Models\Produto::orderBy('nome', 'asc')->get() as $key )
+                                        @foreach ($produtos as $key )
                                         <option data-nome="{{$key->nome}}" data-valor="{{ $key->valor }}" data-maximo="{{$key->desconto_maximo}}"  value="{{ $key->id }}">
                                             {{ $key->nome }}  R${{ number_format($key->valor, 2 ,',', '') }}  
                                         </option>

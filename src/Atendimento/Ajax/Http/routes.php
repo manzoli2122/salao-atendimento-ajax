@@ -44,9 +44,16 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
 
 
-    Route::resource('atendimentos', 'AtendimentoController' , ['except' => [
-        'create', 'store' , 'edit' , 'update' , 
-    ]] ); 
+    Route::resource('atendimentos', 'AtendimentoController' , [
+        'except' => [
+            'create', 'store' , 'edit' , 'update' , 
+        ] ,
+        'names' => [           
+            'index' => 'atendimentos.ajax.index' ,            
+            'show' => 'atendimentos.ajax.show' ,
+            'destroy' => 'atendimentos.ajax.destroy' ,
+        ]
+    ] ); 
 
 
 

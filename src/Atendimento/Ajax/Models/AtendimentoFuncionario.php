@@ -70,6 +70,7 @@ class AtendimentoFuncionario extends Model
     public function validate(){
         throw_if( $this->valor < 0 , ServicoValorException::class);
         throw_if( $this->valor != ( $this->quantidade * $this->valor_unitario ) , ServicoValorException::class);
+        throw_if( !$this->servico , ProdutoValorException::class); 
         $this->valor_unitario =  $this->servico->valor ;
         $this->porcentagem_funcionario =  $this->servico->porcentagem_funcionario ;
     }

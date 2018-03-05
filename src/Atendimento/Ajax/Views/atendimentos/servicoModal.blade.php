@@ -13,7 +13,7 @@
                                 <h4><label for="funcionario_id" style="display: block;">FUNCIONÁRIO:</label></h4>
                                 <select id="funcionario_id" class="form-control" style="width: 100%" name="funcionario_id" required>
                                     <option value="">Selecione o Funcionário</option>
-                                    @foreach (Manzoli2122\Salao\Atendimento\Models\Funcionario::funcionarios() as $key )
+                                    @foreach ($funcionarios as $key )
                                     <option  data-nome="{{$key->apelido}}"  value="{{ $key->id }}">  {{ $key->name }}  </option>
                                     @endforeach
                                 </select> 
@@ -23,7 +23,7 @@
                                 <h4><label for="servico_id" style="display: block;">SERVIÇO:</label></h4>
                                 <select id="servico_id" class="form-control" name="servico_id" style="width: 100%" required >                                   
                                     <option    value="">Selecione o Serviço</option>  
-                                    @foreach (Manzoli2122\Salao\Cadastro\Models\Servico::ativo()->orderBy('nome', 'asc')->get() as $key )
+                                    @foreach ($servicos as $key )
                                         <option data-nome="{{$key->nome}}" data-valor="{{$key->valor}}" data-maximo="{{$key->desconto_maximo}}" value="{{$key->id}}">
                                             {{ $key->nome }}
                                         </option>
@@ -44,10 +44,10 @@
                              <div class="form-group">
                                 <h4><label for="cliente_id"  style="display: block;" >CLIENTE:</label></h4>
                                 <select class="form-control" name="cliente_id" required>
-                                        <option value="">Selecione o Cliente</option>
-                                        @foreach (Manzoli2122\Salao\Atendimento\Models\Cliente::ativo()->orderBy('name', 'asc')->get() as $key )
+                                    <option value="">Selecione o Cliente</option>
+                                    @foreach ($clientes as $key )
                                         <option value="{{ $key->id }}"  {{$key->id == $cliente->id ? 'selected' : ''}}>  {{ $key->name }}   </option>
-                                        @endforeach
+                                    @endforeach
                                 </select> 
                             </div>
                             <div class="form-group">                        

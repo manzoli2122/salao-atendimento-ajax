@@ -7,12 +7,16 @@ use Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento;
 use Manzoli2122\Salao\Atendimento\Ajax\Models\AtendimentoFuncionario;
 use Manzoli2122\Salao\Atendimento\Ajax\Models\ProdutosVendidos;
 use Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente;
-use  Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ServicoValorException;
+use Manzoli2122\Salao\Atendimento\Ajax\Models\Funcionario;
+use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ServicoValorException;
 use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\ProdutoValorException;
 use Manzoli2122\Salao\Atendimento\Ajax\Exceptions\Atendimento\PagamentoValorException;
 use Manzoli2122\Salao\Atendimento\Ajax\Models\Caixa;
 
-
+use Manzoli2122\Salao\Cadastro\Ajax\Models\Produto;
+use Manzoli2122\Salao\Cadastro\Ajax\Models\Servico;
+use Manzoli2122\Salao\Cadastro\Ajax\Models\Operadora;
+use Exception;
 
 
 use Manzoli2122\Salao\Cadastro\Http\Controllers\Padroes\Controller ;
@@ -39,6 +43,7 @@ class AtendimentoController extends Controller  {
     protected $route = "atendimentos.ajax";
 
     protected $logCannel = 'atendimento' ;
+    protected $pagamentos_fiados;
     
 
     public function __construct(Pagamento $pagamento , Atendimento $atendimento, AtendimentoFuncionario $atendimentoFuncionario , 
@@ -63,8 +68,13 @@ class AtendimentoController extends Controller  {
 
 
     public function create($id){
-        $cliente = Cliente::find($id);      
-        return view("{$this->view}.create", compact('cliente'));
+        $cliente = Cliente::find($id); 
+        $produtos = Produto::orderBy('nome', 'asc')->get() ;  
+        $clientes = Cliente::ativo()->orderBy('name', 'asc')->get();
+        $funcionarios = Funcionario::funcionarios();
+        $servicos = Servico::orderBy('nome', 'asc')->get() ;
+        $operadoras = Operadora::orderBy('nome', 'asc')->get();
+        return view("{$this->view}.create", compact('cliente' , 'produtos' , 'funcionarios' , 'servicos' , 'clientes' , 'operadoras' ));
     }
 
     
@@ -72,25 +82,44 @@ class AtendimentoController extends Controller  {
 
     
 
-    public function finalizar(Request $request){
-        $finalizou = false ;     
+    public function finalizar(Request $request){        
         try{
-
-            $atendimento = $this->model->create( ['cliente_id' => 1 , 'valor' => 0 ] );
-
-            
-            $servicos = $this->validarServicos( json_decode( $request->input('_servicos') ) , $atendimento->id );
-
-            $produtos = $this->validarProdutos( json_decode( $request->input('_produtos') ) , $atendimento->id);
-
+            $finalizou = false ;
+            $this->pagamentos_fiados = collect([]);
+            $atendimento = $this->model->create( ['cliente_id' => $request->input('cliente_id') , 'valor' => 0 ] );
+           
+            $servicos = $this->validarServicos( json_decode( $request->input('_servicos') ) , $atendimento->id );            
+            $produtos = $this->validarProdutos( json_decode( $request->input('_produtos') ) , $atendimento->id);                        
             $pagamentos = $this->validarPagamentos( json_decode( $request->input('_pagamentos') ) , $atendimento->id );
 
+            $valor_servicos = $servicos->sum('valor') ;
+            $valor_produtos = $produtos->sum('valor') ;         
+            $valor_pagamentos = $pagamentos->sum('valor') ;
 
+            $valor_atendimento = $valor_servicos + $valor_produtos;
+            $divida = $atendimento->cliente->getDivida() ;
+            $valor_atendimento_com_divida =  $valor_atendimento + $divida ;
+        
+            $atendimento->valor =  $valor_atendimento ; 
+            $atendimento->save();
 
+            if( ( ( $valor_atendimento - $valor_pagamentos )  *  ( $valor_atendimento - $valor_pagamentos ) )  <  0.05  ){
+                $finalizou = true ; 
+                return response()->json(['erro' => false , 'msg' => 'Atendimento Cadastrado com sucesso.' , 'data' => null ], 200);
+            }
+            else if( ( ( $valor_atendimento_com_divida - $valor_pagamentos )  *  ( $valor_atendimento_com_divida - $valor_pagamentos ) ) < 0.05  ){
+                $this->pagamentos_fiados = $atendimento->cliente->pagamentosEmAberto ;
+                foreach($this->pagamentos_fiados as $pagamentoFiado){
+                    $pagamentoFiado->atendimento_da_quitacao()->associate($atendimento);
+                    $pagamentoFiado->save();
+                    $pagamentoFiado->delete();
+                }    
+                $finalizou = true ;  
+                return response()->json(['erro' => false , 'msg' => 'Atendimento Cadastrado com sucesso.' , 'data' => null ], 200);           
+            }
 
-
-
-            $finalizou = true ;
+            return response()->json(['erro' => true , 'msg' => 'Valores do Pagamento não confere com o do atendimento.' , 'data' => null ], 200);
+            
         }
         catch( ServicoValorException $e ){
             return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
@@ -101,20 +130,22 @@ class AtendimentoController extends Controller  {
         catch( PagamentoValorException $e ){
             return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
         }
-        finally {
-            if(!$finalizou){
-                $atendimento->forceDelete();
-                dd('finali');
+        catch( Exception $e ){
+            return response()->json(['erro' => true , 'msg' => $e->getMessage() , 'data' => null ], 200);
+        }
+        finally {           
+            if(!$finalizou){               
+                foreach($this->pagamentos_fiados as $pagamentoFiado){                    
+                    $pagamentoFiado->atendimento_da_quitacao()->dissociate();
+                    $pagamentoFiado->save();  
+                    $pagamentoFiado->restore();                  
+                }
+                if($atendimento){
+                    $atendimento->forceDelete();     
+                }                                                      
             }            
         }
-
-
-        dd($servicos);
         
-        
-
-
-        return response()->json(['erro' => false , 'msg' => 'ok' , 'data' => null ], 200);
     }
 
 
@@ -167,6 +198,11 @@ class AtendimentoController extends Controller  {
             $produtosVendidos->save();
             $produtos->push( $produtosVendidos );            
         }
+
+
+        
+
+
         return $produtos ;
     }
 
@@ -313,7 +349,7 @@ class AtendimentoController extends Controller  {
 
 
 
-    
+    /*
     public function create_temp($id){
         $atendimento = new Atendimento_temp;
         $cliente = Cliente::find($id);
@@ -331,7 +367,7 @@ class AtendimentoController extends Controller  {
         return view("{$this->view}.create", compact('atendimento'));
     }
 
-
+*/
 
    
 
@@ -351,17 +387,17 @@ class AtendimentoController extends Controller  {
 
 
 
-        foreach(Pagamento::where('cliente_id', $atendimento->cliente->id )->where('formaPagamento', 'fiado' )->get() as $pagamentoFiado){
-            $pagamentoFiado->atendimento_da_quitacao()->associate($atendimento);
-            $pagamentoFiado->save();
-            $pagamentoFiado->delete();
-        }
-
+        //foreach(Pagamento::where('cliente_id', $atendimento->cliente->id )->where('formaPagamento', 'fiado' )->get() as $pagamentoFiado){
+        //    $pagamentoFiado->atendimento_da_quitacao()->associate($atendimento);
+        //    $pagamentoFiado->save();
+        //    $pagamentoFiado->delete();
+        //}
+/*
         foreach($atendimento_old->pagamentos as $pagamento){
             $array = $pagamento->toArray();
             unset($array['id']);
-            $array['atendimento_id'] = $atendimento->id;
-            $array['valor_liquido'] = $pagamento->valor ;
+            //$array['atendimento_id'] = $atendimento->id;
+           // $array['valor_liquido'] = $pagamento->valor ;
             if($pagamento->formaPagamento == 'credito'){
                 $array['porcentagem_cartao'] = $pagamento->operadora->porcentagem_credito ;
                 $array['valor_liquido'] = $pagamento->valor *(100 - $pagamento->operadora->porcentagem_credito) / 100  ;
@@ -372,18 +408,21 @@ class AtendimentoController extends Controller  {
             }
             $this->pagamento->create( $array );
         }
+*/
 
+/*
         foreach($atendimento_old->produtos as $produto){
             $array = $produto->toArray();
-            unset($array['id']);
-            $array['atendimento_id'] = $atendimento->id;
-            $array['valor'] = $produto->valor();
-            $array['valor_unitario'] = $produto->produto->valor;
+            //unset($array['id']);
+            //$array['atendimento_id'] = $atendimento->id;
+            //$array['valor'] = $produto->valor();
+            //$array['valor_unitario'] = $produto->produto->valor;
             
             $this->produtosVendidos->create( $array );
         }
+        */
 
-        $atendimento_old->delete();
+        //$atendimento_old->delete();
         
         $atendimento->atualizarValor();
 

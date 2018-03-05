@@ -36,38 +36,26 @@
 
                 <div class="row">        
                     <div class="col-md-12">
-                        <hr style="margin-top:15px;"> 
-                        <h3 style="text-align:right;">Total de Pagamento R$ 12 </h3>
+                        <hr style="margin:5px;"> 
+                        <h3 style="text-align:right; margin:0px; margin-top:10px;" id="valor_total_pagamentos">Total de Pagamento R$ 0,00 </h3>
                     </div>    
                     <div class="col-md-12">
-                        <h3 style="text-align:right; margin:0px; margin-top:25px; color:red;"> Dividas atrasadas R$ 12 </h3>
+                        <h3 style="text-align:right; margin:0px; margin-top:10px; color:red;" id="valor_total_divida" data-nome="{{$cliente->getDivida()}}"> Dividas atrasadas R$ {{ number_format( $cliente->getDivida() , 2 ,',', '') }} </h3>
                     </div>  
                     <div class="col-md-12">
-                        <h3 style="text-align:right; margin:0px; margin-top:25px;" id="valor_total"> Valor Total R$ 12</h3>
+                        <h3 style="text-align:right; margin:0px; margin-top:10px;" id="valor_total"> Valor Total R$ 0,00 </h3>
                     </div>
                     <div class="col-md-12">
-                        <p style="margin-bottom:20px; margin-top:10px">
-                                
-                            <button class="btn btn-success" onclick="atendimentoStore123()" style="width: 100%;">
-                                <i class="fa fa-check"></i> Finalizar 
+                        <p style="margin-bottom:10px; margin-top:10px">                                
+                            <button class="btn btn-success" onclick="atendimentoStore()" style="width: 100%;">
+                                <i class="fa fa-check"></i> FINALIZAR 
                             </button> 
-
-
-                            <form class="form form-search form-ds" method="post" action="{{route('atendimentos.ajax.finalizar')}}" >
-                                {{csrf_field()}}                        
-                                <input name="_servicos" id="_servicos" value="" type="hidden">
-                                <input name="_produtos" id="_produtos" value="" type="hidden">
-                                <input name="_pagamentos" id="_pagamentos" value="" type="hidden">
-                                <button type="submit" class="btn btn-success" style="width: 100%;" >
-                                    <i class="fa fa-check"></i> Finalizar
-                                </button>
-                            </form>
                         </p>
                     </div>
                     <div class="col-md-12">
-                        <a style="width: 100%;" class="btn btn-warning" href='{{route("atendimentos.ajax.cancelar")}}'>
-                            <i class="fa fa-delete" aria-hidden="true"></i>
-                            Cancelar
+                        <a style="width: 100%;" class="btn btn-warning" href='{{route("atendimentos.ajax.index")}}'>
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            CANCELAR
                         </a>      
                     </div>
                 </div>     
@@ -96,134 +84,7 @@
 
     <script>
 
-             
-
-        
-window.AdicionarPagamento = function () {
-
-    var novoPagamento = {};
-    var form = document.forms["form-pagamento"];
-
-    var elements = form.querySelectorAll("input, select, textarea");
-    for (var i = 0; i < elements.length; ++i) {
-        var element = elements[i];
-        var name = element.name;
-        var value = element.value;
-        if (name) {
-            novoPagamento[name] = value;
-        }
-    }
-
-    if (novoPagamento.formaPagamento == '') {
-        toastErro('Selecione a Forma de Pagamento.');
-        return;
-    }
     
-    pagamentos.push(novoPagamento);
-
-    
-    restartModalPagamento();
-    desenharPagamento();
-    calculaValorTotal();
-    alertSucesso("Pagamento Adicionado Com sucesso!!");
-}
-
-
-
-
-window.removerPagamento = function (posicao) {
-    pagamentos.splice(posicao, 1);    
-    desenharServico();
-    calculaValorTotal();
-}
-
-
-
-window.restartModalPagamento = function () {
-    
-    //$('#servico_id').val(null).trigger('change');
-    var form = document.forms["form-pagamento"];
-    
-    form["formaPagamento"].value = '';
-    form["operadora_id"].value = '';
-    form["parcelas"].value = '1';
-    form["valor"].value = '0';
-    form["bandeira"].value = '';
-    form["observacoes"].value = '';
-
-   
-
-    document.getElementById("form-operadora").hidden = true;
-    document.getElementById("form-parcelas").hidden = true;
-    document.getElementById("form-bandeira").hidden = true;
-    document.getElementById("operadora_id").required = false;
-    document.getElementById("parcelas").required = false;
-    document.getElementById("bandeira").required = false;
-    
-}
-
-
-
-
-
-window.desenharPagamento = function () {
-
-    var html = '';
-    for (i in pagamentos) {
-
-        var item = pagamentos[i];
-
-        html = html + '<div class="row"> ';
-        html = html + '     <div class="col-md-12">';
-        html = html + '         <div class="box box-warning">';
-        html = html + '             <div class="box-header with-border">';
-        html = html + '                 <h3 class="box-title">' + item.formaPagamento + '</h3>';
-        html = html + '                 <div class="box-tools pull-right">';
-        html = html + '                     <button class="btn btn-box-tool "type="button" onclick="removerPagamento( ' + i + ' )" > <i class="fa fa-times"> </i> </button>';
-        html = html + '                 </div>  ';
-        html = html + '             </div>   ';
-        html = html + '             <div class="box-body">    ';
-        html = html + '                 <div class="direct-chat-msg">';      
-        html = html + '                     <div class="direct-chat-info clearfix">  ';
-        html = html + '                         <span class="pull-right  badge bg-orange">Valor R$ ' + item.valor + '</span>';
-        html = html + '                         <span class="pull-left"></span>';
-        html = html + '                     </div>';
-        html = html + '                  </div>';
-        html = html + '              </div>';
-        html = html + '         </div>';
-        html = html + '     </div>   ';
-        html = html + '</div>';
-
-    }
-
-    document.getElementById("todos-pagamentos").innerHTML = html;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             function finalizarSend(val) {
                 var atendimento = val.elements['total_atendimento'].value
                 var pagamento = val.elements['total_pagamento'].value
@@ -249,7 +110,8 @@ window.desenharPagamento = function () {
                 $.ajax({
                     url: url ,
                     type: 'post',
-                    data: {_token: token , _servicos: JSON.stringify( servicos ) } ,
+                    data: { _token: token , _servicos: JSON.stringify( servicos ) , _pagamentos: JSON.stringify( pagamentos )  ,
+                            _produtos: JSON.stringify( produtos )  , cliente_id: {{ $cliente->id}}  } ,
                     success: function(retorno) {
                         alertProcessandoHide();							
                         if (retorno.erro) {	                            
@@ -257,7 +119,8 @@ window.desenharPagamento = function () {
                            	  
                         } 
                         else {
-                            toastSucesso(retorno.msg);                           	
+                            toastSucesso(retorno.msg);
+                            window.location = "{{ route('atendimentos.ajax.index') }}";                           	
                         }											
                     },
                     error: function(erro) {

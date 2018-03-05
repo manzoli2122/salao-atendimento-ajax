@@ -45,7 +45,8 @@ class ProdutosVendidos extends Model
 
     public function validate(){
         throw_if( $this->valor < 0 , ProdutoValorException::class);
-        throw_if( $this->valor != ( $this->quantidade * $this->valor_unitario ) , ProdutoValorException::class);        
+        throw_if( $this->valor != ( $this->quantidade * $this->valor_unitario ) , ProdutoValorException::class); 
+        throw_if( !$this->produto , ProdutoValorException::class);          
         $this->valor_unitario =  $this->produto->valor ;
     }
 

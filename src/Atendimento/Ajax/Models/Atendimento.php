@@ -39,8 +39,7 @@ class Atendimento extends Model
         return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
     }
 
-    public function servicos()
-    {     
+    public function servicos(){     
         if($this->deleted_at){
             return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\AtendimentoFuncionario', 'atendimento_id')->onlyTrashed();
         } 

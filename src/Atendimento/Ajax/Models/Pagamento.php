@@ -97,22 +97,28 @@ class Pagamento extends Model
 
     public function validate(){
         throw_if( $this->valor < 0 , PagamentoValorException::class);
-        throw_if( $this->invalido_cartao()  , PagamentoValorException::class);        
-        $this->porcentagem_cartao =  $this->operadora->porcentagem_credito  ;
-    }
+        
+        $this->valor_liquido =  $this->valor;
 
-
-
-
-    private function invalido_cartao(){
-        if( $this->formaPagamento == 'credito' or $this->formaPagamento == 'debito' ){
-            if( $this->bandeira == ''  or $this->operadora_id == ''  ){
-                return true;
-            }            
+        if( $this->formaPagamento == 'credito'){
+            throw_if( !$this->operadora  , PagamentoValorException::class);
+            throw_if( $this->bandeira == ''  , PagamentoValorException::class);
+            $this->porcentagem_cartao =  $this->operadora->porcentagem_credito  ;
+            $this->valor_liquido =  $this->valor * ( 100 - $this->porcentagem_cartao) / 100;
+            return;
         }
-        return false ;
-    }
 
+        if( $this->formaPagamento == 'debito'){
+            throw_if( !$this->operadora  , PagamentoValorException::class);
+            throw_if( $this->bandeira == ''  , PagamentoValorException::class);
+            $this->porcentagem_cartao =  $this->operadora->porcentagem_debito  ;
+            $this->valor_liquido =  $this->valor * ( 100 - $this->porcentagem_cartao) / 100;
+            return;
+        }
+
+        $this->parcelas = 1;
+        $this->operadora_id = null ;
+    }
 
 
 }

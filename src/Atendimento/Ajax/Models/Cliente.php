@@ -129,5 +129,22 @@ class Cliente extends Model implements DataTableJson
     {
         return $this->onlyTrashed()->select(['id', 'name',  ]);        
     }
+
+
+    public function getDivida(){                      
+        $valor = $this->pagamentosEmAberto->sum('valor');        
+        return  $valor;        
+    }
+
+
+    public function pagamentos(){             
+            return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'cliente_id');            
+    }
+
+    public function pagamentosEmAberto(){             
+        return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento', 'cliente_id')->where('formaPagamento', 'fiado' );            
+    }
+
+
     
 }
