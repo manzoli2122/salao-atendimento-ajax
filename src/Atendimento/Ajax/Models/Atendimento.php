@@ -36,7 +36,7 @@ class Atendimento extends Model
 
 
     public function cliente(){
-        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id');
+        return $this->belongsTo('Manzoli2122\Salao\Atendimento\Ajax\Models\Cliente', 'cliente_id')->withTrashed();
     }
 
     public function servicos(){     

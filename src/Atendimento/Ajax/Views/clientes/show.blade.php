@@ -78,6 +78,6 @@
     </section>
 
     @forelse($model->atendimentosLast as $atendimento)
-        @include('atendimento::clientes.atendimentoModal')				
+        @include('atendimentoAjax::clientes.atendimentoModal')				
     @empty
     @endforelse
