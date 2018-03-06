@@ -3,7 +3,17 @@
 @section( Config::get('app.templateMasterContent' , 'content')  ) 
 
 <section class="content-header">
-    <h1> <span id="div-titulo-pagina">Cliente : {{ $cliente->name}}  </span>  </h1>
+    <h1> <span id="div-titulo-pagina">Cliente : {{ $cliente->name}}  </span>  
+        <small style="float: right;">
+            @if($cliente->getDivida() > 0)
+                <div class="checkbox" style="text-align: right; margin:0px;">
+                    <label id="valor_total_divida" data-valor="{{$cliente->getDivida()}}" style="text-align:right; margin:0px; margin-top:0px; color:red; font-size: 24px;">
+                        <input onchange="alterardivida()" type="checkbox" style="margin-top: 5px;"> Dividas atrasadas R$ {{ number_format( $cliente->getDivida() , 2 ,',', '') }}
+                    </label>
+                </div>
+            @endif	
+        </small>
+    </h1>
 </section>	
 
 <section class="content">
@@ -37,13 +47,11 @@
                 <div class="row">        
                     <div class="col-md-12">
                         <hr style="margin:5px;"> 
-                        <h3 style="text-align:right; margin:0px; margin-top:10px;" id="valor_total_pagamentos">Total de Pagamento R$ 0,00 </h3>
+                        <h3 data-valor="0" style="text-align:right;  margin:0px; margin-top:10px;" id="valor_total_pagamentos">Total dos Pagamentos R$ 0,00 </h3>
                     </div>    
+                    
                     <div class="col-md-12">
-                        <h3 style="text-align:right; margin:0px; margin-top:10px; color:red;" id="valor_total_divida" data-nome="{{$cliente->getDivida()}}"> Dividas atrasadas R$ {{ number_format( $cliente->getDivida() , 2 ,',', '') }} </h3>
-                    </div>  
-                    <div class="col-md-12">
-                        <h3 style="text-align:right; margin:0px; margin-top:10px;" id="valor_total"> Valor Total R$ 0,00 </h3>
+                        <h3 data-valor="0" style="text-align:right; margin:0px; margin-top:10px;" id="valor_total"> Valor Total R$ 0,00 </h3>
                     </div>
                     <div class="col-md-12">
                         <p style="margin-bottom:10px; margin-top:10px">                                
@@ -58,11 +66,7 @@
                             CANCELAR
                         </a>      
                     </div>
-                </div>     
-                <div class="row">        
-                    <div class="col-md-12">                   
-                    </div>                    
-                </div>   
+                </div>    
             </div>            
         </section>
     </div>
@@ -84,27 +88,19 @@
 
     <script>
 
-    
-            function finalizarSend(val) {
-                var atendimento = val.elements['total_atendimento'].value
-                var pagamento = val.elements['total_pagamento'].value
-                var dif = atendimento - pagamento;
-                if (dif > 0.09) {
-                    alert('O valor total do atendimento que é R$' + atendimento +
-                        ' não confere com o do pagamento que é R$' + pagamento);
-                    return false;
-                }
-                return true;
-            }
-            
-            window.atendimentoStore123 = function(  ) {
-                document.getElementById("_servicos").value = JSON.stringify( servicos );  
-                document.getElementById("_pagamentos").value = JSON.stringify( pagamentos ); 
-                document.getElementById("_produtos").value = JSON.stringify( produtos );
-            }
                         
             window.atendimentoStore = function(  ) {			
                 alertProcessando();	
+                
+                var valorPagamentos =   parseFloat( document.getElementById("valor_total_pagamentos").dataset.valor  ) ;
+                var valorAtendimentos =  parseFloat( document.getElementById("valor_total").dataset.valor  ) ;
+                var diferenca = valorAtendimentos - valorPagamentos ;
+                
+                if( ( diferenca * diferenca ) > 0  ){      
+                    toastErro("Valor total não confere com valor dos Pagamentos");                    
+                    alertProcessandoHide();	
+                    return ;
+                }
                 var token = document.head.querySelector('meta[name="csrf-token"]').content;			
                 var url = "{{route('atendimentos.ajax.finalizar')}}" ;
                 $.ajax({

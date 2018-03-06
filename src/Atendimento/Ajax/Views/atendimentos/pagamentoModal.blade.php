@@ -46,7 +46,7 @@
                         <div class="col-md-6">
                             <div class="form-group"  >
                                 <h4><label for="valor" class="col-form-label" style="display: block;">VALOR:</label></h4>
-                                <input style="color:red; font-size:20px; font-weight: bold;" placeholder="valor" id="valor_pagamento" step="0.01" class="form-control" required="" min="0" name="valor" value="0" type="number">
+                                <input style="color:red; font-size:20px; font-weight: bold;" placeholder="valor" id="valor_pagamento" step="0.01" class="form-control" required="" min="0" name="valor" value="{{$cliente->getDivida()}}" type="number">
                             </div>
                             <div class="form-group" id="form-bandeira" hidden>
                                 <h4><label for="bandeira" style="display: block;">BANDEIRA:</label></h4>
