@@ -1,6 +1,3 @@
-@extends( Config::get('app.templateMasterJson' , 'templates.templateMasterJson')  )
-
-@section( Config::get('app.templateMasterContent' , 'content')  ) 
 
 <section class="content-header">
     <h1> <span id="div-titulo-pagina">Cliente : {{ $cliente->name}}  </span>  
@@ -62,11 +59,11 @@
                             </button> 
                         </p>
                     </div>
+                    
                     <div class="col-md-12">
-                        <a style="width: 100%;" class="btn btn-warning" href='{{route("atendimentos.ajax.index")}}'>
-                            <i class="fa fa-times" aria-hidden="true"></i>
-                            CANCELAR
-                        </a>      
+                        <button style="width: 100%;" type="button" class="btn btn-warning"  onclick="modelVoltarIndex()" > 
+                            <i class="fa fa-times" aria-hidden="true"></i> CANCELAR 
+                        </button>    
                     </div>
                 </div>    
             </div>            
@@ -78,9 +75,3 @@
     @include('atendimentoAjax::atendimentos.produtoModal')
     @include('atendimentoAjax::atendimentos.pagamentoModal')
     
-@endsection
- 
-
-@push( Config::get('app.templateMasterScript' , 'script')  )        
-    <script src="{{ mix('js/atendimento.js') }}" type="text/javascript"></script>
-@endpush

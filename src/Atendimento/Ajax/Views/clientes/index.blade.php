@@ -39,7 +39,7 @@
 
 @push(Config::get('app.templateMasterScript' , 'script') )
 	<script src="{{ mix('js/datatables-padrao.js') }}" type="text/javascript"></script>
-
+	<script src="{{ mix('js/atendimento.js') }}" type="text/javascript"></script>
 	<script>
 
 		var pagianIndex = document.getElementById("div-pagina").innerHTML;		
@@ -60,13 +60,7 @@
 			});
 	
 			dataTable.on('draw', function () {
-				$('[btn-excluir]').click(function (){
-					excluirRecursoPeloId($(this).data('id'), "@lang('msg.conf_excluir_o', ['1' => 'Cliente' ])", "{{ route('clientes.ajax.index') }}", 
-						function(){
-							dataTable.row( $(this).parents('tr') ).remove().draw('page');
-						}
-					);
-				});
+				
 
 				$('[btn-show]').click(function (){					
 					modelShow($(this).data('id'), "{{ route('clientes.ajax.index') }}",
@@ -76,13 +70,15 @@
 					);                 
 				});
 
-				$('[btn-editar]').click(function (){					
-					modelEditar($(this).data('id'), "{{ route('clientes.ajax.index') }}",
+
+				$('[btn-atender]').click(function (){					
+					modelAtender($(this).data('id'), "{{ route('atendimentos.ajax.atender') }}",
 						function(){							
-							comboboxFunction();						
+							//comboboxFunction();						
 						} 	
 					);                 
 				});
+				
 
 			});
 

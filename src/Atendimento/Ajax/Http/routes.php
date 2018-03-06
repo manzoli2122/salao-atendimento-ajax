@@ -34,7 +34,8 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
     Route::post('atendimentos/finalizar', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
     Route::post('atendimentos/{id}/alterar/data', 'AtendimentoController@alterarData')->name('atendimentos.ajax.alterarData');
-    Route::get('clientes/{id}/atendendo', 'AtendimentoController@create')->name('clientes.ajax.atender');
+    Route::get('clientes/atendendo/{id}', 'AtendimentoController@create')->name('clientes.ajax.atender');
+    Route::get('clientes/atendendo', 'AtendimentoController@create')->name('atendimentos.ajax.atender');
     Route::post('atendimentos/pesquisar', 'AtendimentoController@pesquisar')->name('atendimentos.ajax.pesquisar');  
     Route::resource('atendimentos', 'AtendimentoController' , [
         'except' => [

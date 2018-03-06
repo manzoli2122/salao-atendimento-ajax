@@ -15,10 +15,10 @@
                             <label>Excluído</label>
                         </div>
                         <div class="align-right">
-
-                            <a href="{{route('clientes.ajax.atender', $model->id)}}" class="btn btn-success" title="Atender" remover-apos-excluir> 
+ 
+                            <button type="button" class="btn btn-success"  onclick="modelAtender( {{$model->id}} , '{{ route('atendimentos.ajax.atender') }}')" title="Atender" remover-apos-excluir>
                                 <i class="fa fa-money"></i> Atender
-                            </a>   
+                            </button>
 
                             @permissao('clientes-soft-delete')
                                 <button type="button" class="btn btn-danger"  onclick="modelDelete( {{$model->id}} , '{{ route('clientes.ajax.index') }}')" remover-apos-excluir>

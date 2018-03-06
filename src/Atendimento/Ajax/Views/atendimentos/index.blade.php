@@ -262,14 +262,4 @@
         }
 	</script>
 @endpush
-		
-@push( Config::get('app.templateMasterCss' , 'css')  )			
-	<style type="text/css">
-		
-		.pagination{
-			margin:0px;
-			display: unset;
-			font-size:12px;
-		}
-	</style>
-@endpush
+	

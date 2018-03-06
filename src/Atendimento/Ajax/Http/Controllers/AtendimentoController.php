@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
 use ChannelLog as Log;
 use Session;
 use Auth;
-
+use View;
 
 
 
@@ -68,13 +68,23 @@ class AtendimentoController extends Controller  {
 
 
     public function create($id){
-        $cliente = Cliente::find($id); 
-        $produtos = Produto::orderBy('nome', 'asc')->get() ;  
-        $clientes = Cliente::ativo()->orderBy('name', 'asc')->get();
-        $funcionarios = Funcionario::funcionarios();
-        $servicos = Servico::orderBy('nome', 'asc')->get() ;
-        $operadoras = Operadora::orderBy('nome', 'asc')->get();
-        return view("{$this->view}.create", compact('cliente' , 'produtos' , 'funcionarios' , 'servicos' , 'clientes' , 'operadoras' ));
+        try {                      
+            $cliente = Cliente::find($id); 
+            $produtos = Produto::orderBy('nome', 'asc')->get() ;  
+            $clientes = Cliente::ativo()->orderBy('name', 'asc')->get();
+            $funcionarios = Funcionario::funcionarios();
+            $servicos = Servico::orderBy('nome', 'asc')->get() ;
+            $operadoras = Operadora::orderBy('nome', 'asc')->get();            
+            $html = (string) View::make("{$this->view}.create", compact('cliente' , 'produtos' , 'funcionarios' , 'servicos' , 'clientes' , 'operadoras' ));     
+            return response()->json(['erro' => false , 'msg' =>'Pagina criada com sucesso.' , 'data' => $html   ], 200);  
+           
+        } catch(\Illuminate\Database\QueryException $e) {
+            $msg = $e->errorInfo[1] == ErrosSQL::DELETE_OR_UPDATE_A_PARENT_ROW ? 
+                __('msg.erro_exclusao_fk', ['1' =>  $this->name  , '2' => 'Model']):
+                __('msg.erro_bd');
+            return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+        }
+
     }
 
     
@@ -100,12 +110,12 @@ class AtendimentoController extends Controller  {
             $valor_produtos = $produtos->sum('valor') ;         
             $valor_pagamentos = $pagamentos->sum('valor') ;
             
-            $valor_atendimento = $valor_servicos + $valor_produtos;
-            
+            $valor_atendimento = $valor_servicos + $valor_produtos;            
             $valor_atendimento_com_divida =  $valor_atendimento + $divida ;
         
             $atendimento->valor =  $valor_atendimento ; 
             $atendimento->save();
+
 
             if( ( ( $valor_atendimento - $valor_pagamentos )  *  ( $valor_atendimento - $valor_pagamentos ) )  <  0.05  ){
                 $finalizou = true ; 

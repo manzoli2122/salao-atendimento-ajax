@@ -96,7 +96,7 @@ class Pagamento extends Model
 
 
     public function validate(){
-        throw_if( $this->valor < 0 , PagamentoValorException::class);
+        throw_if( $this->valor <= 0 , PagamentoValorException::class);
         
         $this->valor_liquido =  $this->valor;
 
