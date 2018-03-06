@@ -7,7 +7,7 @@
                 <h4 class="modal-title">Alterar data</h4>
             </div>
             <div class="modal-body">                        
-                <form method="post" action="{{route('atendimentos.alterarData', $model->id)}}" class="form form-search form-ds">
+                <form method="post" action="{{route('atendimentos.ajax.alterarData', $model->id)}}" class="form form-search form-ds">
                     {{csrf_field()}}
                     <div class="row">
                         <div class="col-md-12">

@@ -4,11 +4,13 @@
 
 <section class="content-header">
     <h1> <span id="div-titulo-pagina">Cliente : {{ $cliente->name}}  </span>  
+             
         <small style="float: right;">
             @if($cliente->getDivida() > 0)
                 <div class="checkbox" style="text-align: right; margin:0px;">
-                    <label id="valor_total_divida" data-valor="{{$cliente->getDivida()}}" style="text-align:right; margin:0px; margin-top:0px; color:red; font-size: 24px;">
-                        <input onchange="alterardivida()" type="checkbox" style="margin-top: 5px;"> Dividas atrasadas R$ {{ number_format( $cliente->getDivida() , 2 ,',', '') }}
+                    <label id="valor_total_divida" data-valor="{{$cliente->getDivida()}}" style="text-align:right; margin:0px; margin-top:0px; color:red; font-size: 24px;font-weight: bold;">
+                            <input onchange="alterardivida()" type="checkbox" style="margin-top: 5px;"> 
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Pagar dividas atrasadas de R$ {{ number_format( $cliente->getDivida() , 2 ,',', '') }}
                     </label>
                 </div>
             @endif	
@@ -55,7 +57,7 @@
                     </div>
                     <div class="col-md-12">
                         <p style="margin-bottom:10px; margin-top:10px">                                
-                            <button class="btn btn-success" onclick="atendimentoStore()" style="width: 100%;">
+                            <button class="btn btn-success" onclick="atendimentoStore('{{route('atendimentos.ajax.finalizar')}} ', '{{$cliente->id}}', '{{route('atendimentos.ajax.index')}}')" style="width: 100%;">
                                 <i class="fa fa-check"></i> FINALIZAR 
                             </button> 
                         </p>
@@ -79,53 +81,6 @@
 @endsection
  
 
-
-
-
-
 @push( Config::get('app.templateMasterScript' , 'script')  )        
     <script src="{{ mix('js/atendimento.js') }}" type="text/javascript"></script>
-
-    <script>
-
-                        
-            window.atendimentoStore = function(  ) {			
-                alertProcessando();	
-                
-                var valorPagamentos =   parseFloat( document.getElementById("valor_total_pagamentos").dataset.valor  ) ;
-                var valorAtendimentos =  parseFloat( document.getElementById("valor_total").dataset.valor  ) ;
-                var diferenca = valorAtendimentos - valorPagamentos ;
-                
-                if( ( diferenca * diferenca ) > 0  ){      
-                    toastErro("Valor total não confere com valor dos Pagamentos");                    
-                    alertProcessandoHide();	
-                    return ;
-                }
-                var token = document.head.querySelector('meta[name="csrf-token"]').content;			
-                var url = "{{route('atendimentos.ajax.finalizar')}}" ;
-                $.ajax({
-                    url: url ,
-                    type: 'post',
-                    data: { _token: token , _servicos: JSON.stringify( servicos ) , _pagamentos: JSON.stringify( pagamentos )  ,
-                            _produtos: JSON.stringify( produtos )  , cliente_id: {{ $cliente->id}}  } ,
-                    success: function(retorno) {
-                        alertProcessandoHide();							
-                        if (retorno.erro) {	                            
-                            toastErro(retorno.msg);
-                           	  
-                        } 
-                        else {
-                            toastSucesso(retorno.msg);
-                            window.location = "{{ route('atendimentos.ajax.index') }}";                           	
-                        }											
-                    },
-                    error: function(erro) {
-                        alertProcessandoHide();
-                        toastErro("Ocorreu um erro");
-                        console.log(erro);
-                    }
-                });		
-            }
-    </script>
-
 @endpush

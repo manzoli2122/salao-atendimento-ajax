@@ -108,7 +108,7 @@
             @endforelse            
             <h3 style="text-align:right;">Total R$ {{number_format($model->valor, 2 ,',', '') }} </h3>
 
-            <form method="POST" action="{{route('atendimentos.pesquisar')}}" accept-charset="UTF-8">
+            <form method="POST" action="{{route('atendimentos.ajax.pesquisar')}}" accept-charset="UTF-8">
                     {{csrf_field()}}
                     <input class="form-control" value="{{$model->created_at->format('Y-m-d')}}"  name="data" type="hidden">
                     <button style="margin-right:10px; width:100% ; " class="btn btn-warning btn-sm" type="submit">Voltar                                

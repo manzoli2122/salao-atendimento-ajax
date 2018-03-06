@@ -6,7 +6,7 @@
 
 @section( Config::get('app.templateMasterContentTituloSmallRigth' , 'small-content-header-right')  )
 	
-	<form method="POST" action="{{route('atendimentos.pesquisar')}}" accept-charset="UTF-8">
+	<form method="POST" action="{{route('atendimentos.ajax.pesquisar')}}" accept-charset="UTF-8">
 		{{csrf_field()}}
 		<div class="input-group input-group-sm" style="width: 150px; margin-left:auto;">
 			
@@ -25,7 +25,7 @@
 
 @section( Config::get('app.templateMasterContent' , 'content')  ) 		
 	@forelse($caixa->atendimentos() as $model)	
-		@include('atendimento::atendimentos.modalAterarData')
+		@include('atendimentoAjax::atendimentos.modalAterarData')
 	@empty									
 	@endforelse	
 </div>
@@ -59,29 +59,29 @@
 						<td>
 							@if($model->created_at->isToday())
 								@permissao('atendimentos')								
-									<a class="btn btn-success btn-sm" href='{{route("atendimentos.show", $model->id)}}'>
+									<a class="btn btn-success btn-xs" href='{{route("atendimentos.ajax.show", $model->id)}}'>
 										<i class="fa fa-eye" aria-hidden="true"></i>Exibir</a>									
-									<a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#alterarDataModal{{$model->id}}" > 
+									<a class="btn btn-warning btn-xs" data-toggle="modal" data-target="#alterarDataModal{{$model->id}}" > 
 										Alterar Data
 									</a>							
 								@endpermissao		
 								@permissao('atendimentos-soft-delete')			
-									<a class="btn btn-danger btn-sm"  href="javascript:void(0);" onclick="$(this).find('form').submit();" >
-										<form  method="post" action="{{route('atendimentos.destroySoft', $model->id)}}" onsubmit="return  ApagarAtendimento(this)">
+									<a class="btn btn-danger btn-xs"  href="javascript:void(0);" onclick="$(this).find('form').submit();" >
+										<form  method="post" action="{{route('atendimentos.ajax.destroy', $model->id)}}" onsubmit="return  ApagarAtendimento(this)">
 											{{csrf_field()}}    
 											<input name="_method" value="DELETE" type="hidden">                    
 										</form>  
 										<i class="fa fa-trash" aria-hidden="true"></i>Apagar</a>													
 								@endpermissao
 							@else
-								<a class="btn btn-success btn-sm" href='{{route("atendimentos.show", $model->id)}}'>
+								<a class="btn btn-success btn-xs" href='{{route("atendimentos.ajax.show", $model->id)}}'>
 									<i class="fa fa-eye" aria-hidden="true"></i>Exibir</a>
 								@permissao('atendimentos-mega-power')
-									<a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#alterarDataModal{{$model->id}}" > 
+									<a class="btn btn-warning btn-xs" data-toggle="modal" data-target="#alterarDataModal{{$model->id}}" > 
 										Alterar Data
 									</a>
-									<a class="btn btn-danger btn-sm"  href="javascript:void(0);" onclick="$(this).find('form').submit();" >
-										<form  method="post" action="{{route('atendimentos.destroySoft', $model->id)}}" onsubmit="return  ApagarAtendimento(this)">
+									<a class="btn btn-danger btn-xs"  href="javascript:void(0);" onclick="$(this).find('form').submit();" >
+										<form  method="post" action="{{route('atendimentos.ajax.destroy', $model->id)}}" onsubmit="return  ApagarAtendimento(this)">
 											{{csrf_field()}}    
 											<input name="_method" value="DELETE" type="hidden">                    
 										</form>  
@@ -265,9 +265,7 @@
 		
 @push( Config::get('app.templateMasterCss' , 'css')  )			
 	<style type="text/css">
-		.btn-sm{
-			padding: 1px 10px;
-		}
+		
 		.pagination{
 			margin:0px;
 			display: unset;

@@ -86,7 +86,7 @@ class AtendimentoController extends Controller  {
         try{
             $finalizou = false ;
             $this->pagamentos_fiados = collect([]);
-            $atendimento = $this->model->create( ['cliente_id' => $request->input('cliente_id') , 'valor' => 0 ] );
+            $atendimento = $this->model->create( ['cliente_id' => $request->input('_cliente_id') , 'valor' => 0 ] );
            
             $divida = $atendimento->cliente->getDivida() ;
             
@@ -295,7 +295,7 @@ class AtendimentoController extends Controller  {
             $model->save();              
             Log::write( $this->logCannel , $msg  );            
         }        
-        return redirect()->route('atendimentos.index');
+        return redirect()->route('atendimentos.ajax.index');
     }
 
 
