@@ -16,7 +16,7 @@
                         </div>
                         <div class="align-right">
 
-                            <a href="{{route('clientes.atender', $model->id)}}" class="btn btn-success" title="Atender" remover-apos-excluir> 
+                            <a href="{{route('clientes.ajax.atender', $model->id)}}" class="btn btn-success" title="Atender" remover-apos-excluir> 
                                 <i class="fa fa-money"></i> Atender
                             </a>   
 

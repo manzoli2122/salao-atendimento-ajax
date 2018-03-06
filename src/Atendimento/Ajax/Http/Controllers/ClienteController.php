@@ -35,23 +35,6 @@ class ClienteController extends DataTableJsonController
     }
 
 
-   
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -126,15 +109,11 @@ class ClienteController extends DataTableJsonController
     {
         $models = $this->model->getDatatable();
         return Datatables::of($models)                
-        ->addColumn('action', function($linha) {        
-            return                 
-                           '<a href="'.route("{$this->route}.atender", $linha->id).'" class="btn btn-success btn-xs btn-datatable"     title="Atender"> <i class="fa fa-money fa-lg"></i>  </a> '
-                            
-                            . '<button data-id="'.$linha->id.'" type="button" class="btn btn-primary btn-xs btn-datatable" btn-show    title="Visualizar" style="margin-left: 10px;"> <i class="fa fa-search"></i> </button>'
-                           
-                            ;
-                    })
-                    ->make(true);
+            ->addColumn('action', function($linha) {        
+                return                 
+                    '<a href="'.route("{$this->route}.atender", $linha->id).'" class="btn btn-success btn-xs btn-datatable"     title="Atender"> <i class="fa fa-money fa-lg"></i>  </a> '
+                    . '<button data-id="'.$linha->id.'" type="button" class="btn btn-primary btn-xs btn-datatable" btn-show    title="Visualizar" style="margin-left: 10px;"> <i class="fa fa-search"></i> </button>' ;
+            })->make(true);
     }
     
 

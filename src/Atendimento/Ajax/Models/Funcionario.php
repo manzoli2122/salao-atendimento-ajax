@@ -5,19 +5,20 @@ namespace Manzoli2122\Salao\Atendimento\Ajax\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Funcionario extends Model 
 {
 
-    public function newInstance($attributes = [], $exists = false)
-    {
+    use SoftDeletes;
+
+    public function newInstance($attributes = [], $exists = false){
         $model = parent::newInstance($attributes, $exists);    
         $model->setTable($this->getTable());    
         return $model;
     }
 
-    public function getTable()
-    {
+    public function getTable() {
         return  Config::get('atendimento.funcionario_table' , 'users') ;  
     }
 
@@ -45,7 +46,7 @@ class Funcionario extends Model
 
     public static function funcionariosDoDia($data){  
         if($data == '') return null;
-        return  Funcionario::whereIn('id', function($query2) use($data) { //} use ($user){
+        return  Funcionario::withTrashed()->whereIn('id', function($query2) use($data) { //} use ($user){
                         $query2->distinct()->select("atendimento_funcionarios.funcionario_id");
                         $query2->from("atendimento_funcionarios");
                         $query2->whereDate('created_at', $data );         

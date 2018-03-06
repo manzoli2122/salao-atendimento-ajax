@@ -35,6 +35,7 @@ class Cliente extends Model implements DataTableJson
         return $this->find($id);
     }
 
+
     public function findModelSoftDeleteJson($id){
         return $this->onlyTrashed()->find($id);
     }
@@ -50,6 +51,7 @@ class Cliente extends Model implements DataTableJson
         'password', 'remember_token',
     ];
     
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -57,41 +59,36 @@ class Cliente extends Model implements DataTableJson
         
     ];
 
-    public function scopeAtivo($query)
-    {
+
+    public function scopeAtivo($query){
         return $query->where('ativo', 1);
     }
 
     
-    public function scopeInativo($query)
-    {
+    public function scopeInativo($query){
         return $query->where('ativo', 0);
     }
 
 
-    public function index($totalPage)
-    {
+    public function index($totalPage){
         return $this->ativo()->orderBy('name', 'asc')->paginate($totalPage);        
     }
 
 
 
-    public function atendimentos()
-    {        
+    public function atendimentos(){        
         return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc');
     }
 
 
-    public function atendimentosLast()
-    {        
+    public function atendimentosLast(){        
         return $this->hasMany('Manzoli2122\Salao\Atendimento\Ajax\Models\Atendimento', 'cliente_id')->orderBy('created_at', 'desc')->take(6);
     }
 
 
 
 
-    public function rules($id = '')
-    {
+    public function rules($id = ''){
         return [
             'name' => 'required|min:3|max:100',
             'email' => "required|min:3|max:100|email|unique:users,email,{$id},id",
@@ -125,8 +122,7 @@ class Cliente extends Model implements DataTableJson
 
 
     
-    public function getDatatableApagados()
-    {
+    public function getDatatableApagados(){
         return $this->onlyTrashed()->select(['id', 'name',  ]);        
     }
 

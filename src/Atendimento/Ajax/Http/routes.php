@@ -12,11 +12,6 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
     Route::get('clientes/apagados/{id}', 'ClienteController@showApagado')->name('clientes.showapagado');        
     Route::get('clientes/apagados', 'ClienteController@indexApagados')->name('clientes.apagados');
     Route::delete('clientes/apagados/{id}', 'ClienteController@destroySoft')->name('clientes.destroySoft');        
-    //Route::post('clientes/getDatatable/apagados', 'ClienteController@getDatatableApagados')->name('clientes.getDatatable.apagados');        
-    
-    //Route::post('clientes/getDatatable', 'ClienteController@getDatatable')->name('clientes.getDatatable');             
-    //Route::get('clientes/restore/{id}', 'ClienteController@restore')->name('clientes.restore');
-    //Route::resource('clientes', 'ClienteController');
     
     Route::post('clientes/getDatatable', 'ClienteController@getDatatable')->name('clientes.ajax.getDatatable');
     Route::resource('clientes', 'ClienteController' , ['names' => [
@@ -37,7 +32,7 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
 
 
-
+    Route::post('atendimentos/finalizar', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
     Route::post('atendimentos/{id}/alterar/data', 'AtendimentoController@alterarData')->name('atendimentos.ajax.alterarData');
     Route::get('clientes/{id}/atendendo', 'AtendimentoController@create')->name('clientes.ajax.atender');
     Route::post('atendimentos/pesquisar', 'AtendimentoController@pesquisar')->name('atendimentos.ajax.pesquisar');  
@@ -55,7 +50,7 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
 
 
 
-    //Route::post('atendimentos/finalizar', 'AtendimentoController@finalizar')->name('atendimentos.ajax.finalizar');
+    
     //Route::get('atendimentos/cadastrar/{id}', 'AtendimentoController@adicionarItens_temp')->name('atendimentos.ajax.adicionarItens');
   
 
@@ -77,7 +72,7 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
         Route::group(['prefix' => 'apagados', 'middleware' => 'auth' ], function(){
             
             
-            // OPERADORAS
+            // CLIENTES
             Route::post('clientes/restore/{id}', 'ClienteSoftDeleteController@restore')->name('clientes.ajax.apagados.restore');        
             Route::post('clientes/getDatatable', 'ClienteSoftDeleteController@getDatatable')->name('clientes.ajax.apagados.getDatatable');        
             Route::resource('clientes', 'ClienteSoftDeleteController', ['only' => [
@@ -89,6 +84,9 @@ Route::group(['prefix' => 'atendimento/ajax', 'middleware' => 'auth' ], function
                     'destroy' => 'clientes.ajax.apagados.destroy' ,
                 ]
             ]); 
+
+
+            
 
 
         });

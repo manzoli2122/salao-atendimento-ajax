@@ -48,7 +48,7 @@
 				dom: "<'row'<'col-xs-12'<'col-xs-12'f>>>"+
             		 "<'row'<'col-xs-12't>>"+
             		 "<'row'<'col-xs-12'p>>",
-				order: [[ 1, "asc" ]],
+				order: [[ 0, "asc" ]],
 				ajax: { 
 					url:'{{ route('clientes.ajax.getDatatable') }}'
 				},
