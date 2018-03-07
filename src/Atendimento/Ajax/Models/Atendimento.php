@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Manzoli2122\Salao\Atendimento\Ajax\Models\Pagamento;
 use Config;
 
+use Manzoli2122\Pacotes\Contracts\Models\DataTableJson;
+
 use DB ; 
 
-class Atendimento extends Model
+class Atendimento extends Model implements DataTableJson
 {
     use SoftDeletes;
     
@@ -33,6 +35,10 @@ class Atendimento extends Model
     protected $fillable = [
         'cliente_id', 'valor', 'arquivado' , 
     ];
+
+    public function rules( $id = '' ){
+        
+    }
 
 
     public function cliente(){
@@ -155,6 +161,14 @@ class Atendimento extends Model
 
 
 
+
+    public function findModelJson($id){
+        return $this->find($id);
+    }
+
+    public function findModelSoftDeleteJson($id){
+        return $this->onlyTrashed()->find($id);
+    }
 
 
 

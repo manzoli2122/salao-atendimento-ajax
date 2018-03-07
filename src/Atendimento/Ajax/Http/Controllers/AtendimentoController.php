@@ -64,9 +64,198 @@ class AtendimentoController extends Controller  {
     }
     
 
+    
+    public function pesquisar(Request $request){       
+        try {    
+            $dataForm = $request->except('_token');
+            $dataString = $dataForm['data'];
+            $data = Carbon::createFromFormat('Y-m-d', $dataString);
+            $caixa = new Caixa;
+            $caixa->data = $data ; 
+            
+            $html = (string) View::make("{$this->view}._index", compact("caixa"));    
+            $html =  preg_replace( '/\r/' , '', $html)  ; 
+            $html =  preg_replace( '/\n/' , '', $html)  ;
+            $html =  preg_replace( '/\t/' , '', $html)  ;  
+            $html =  preg_replace( '/(>)(\s+)(<)/' , '\1\3', $html)  ; 
+            return response()->json(['erro' => false , 'msg' =>'Item encontrado com sucesso.' , 'data' => $html   ], 200);  
+           
+        } catch(\Illuminate\Database\QueryException $e) {
+            $msg = $e->errorInfo[1] == ErrosSQL::DELETE_OR_UPDATE_A_PARENT_ROW ? 
+                __('msg.erro_exclusao_fk', ['1' =>  $this->name  , '2' => 'Model']):
+                __('msg.erro_bd');
+            return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+        }
+    }
+
+
+    
+
+
+    public function show($id){    
+        try {            
+            if(!$model = $this->model->findModelJson($id) ){
+                $msg = __('msg.erro_nao_encontrado', ['1' =>  $this->name ]);
+                return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+            } 
+            
+            $html = (string) View::make("{$this->view}.show", compact("model"));              
+            $html =  preg_replace( '/\r/' , '', $html)  ; 
+            $html =  preg_replace( '/\n/' , '', $html)  ;
+            $html =  preg_replace( '/\t/' , '', $html)  ;  
+            $html =  preg_replace( '/(>)(\s+)(<)/' , '\1\3', $html)  ; 
+            return response()->json(['erro' => false , 'msg' =>'Item encontrado com sucesso.' , 'data' => $html   ], 200);  
+           
+        } catch(\Illuminate\Database\QueryException $e) {
+            $msg = $e->errorInfo[1] == ErrosSQL::DELETE_OR_UPDATE_A_PARENT_ROW ? 
+                __('msg.erro_exclusao_fk', ['1' =>  $this->name  , '2' => 'Model']):
+                __('msg.erro_bd');
+            return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+        }
+    }
 
 
 
+
+   
+
+    public function alterarData(Request $request ){
+        
+        try {            
+            if(!$model = $this->model->findModelJson($request->input('id')) ){
+                $msg = __('msg.erro_nao_encontrado', ['1' =>  $this->name ]);
+                return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+            } 
+            $dataPesquisar = $model->created_at ;
+            if( $model->created_at->isToday() or Auth::user()->hasPerfil('Admin') ){
+                $data = $request->input('data');  
+                $data = $data . " 12:00:00";
+                $msg =  "ATENDIMENTO NÚMERO (ID) ". $model->id  .   " - ALTERAÇÃO DE DATA - DE " . $model->created_at . " PARA " . $data  . ' responsavel: ' . session('users') ;  
+                foreach($model->servicos as $servico){
+                    $servico->created_at = $data;
+                    $servico->save();
+                }
+                foreach($model->pagamentos as $pagamento){
+                    $pagamento->created_at = $data;
+                    $pagamento->save();                
+                }
+                foreach($model->produtos as $produto){
+                    $produto->created_at = $data;
+                    $produto->save();            
+                } 
+                $model->created_at = $data;    
+                $model->save();              
+                Log::write( $this->logCannel , $msg  );            
+            }       
+
+            $caixa = new Caixa;
+            $caixa->data =  $dataPesquisar  ; 
+            
+            $html = (string) View::make("{$this->view}._index", compact("caixa"));    
+            $html =  preg_replace( '/\r/' , '', $html)  ; 
+            $html =  preg_replace( '/\n/' , '', $html)  ;
+            $html =  preg_replace( '/\t/' , '', $html)  ;  
+            $html =  preg_replace( '/(>)(\s+)(<)/' , '\1\3', $html)  ; 
+
+            return response()->json(['erro' => false , 'msg' =>'Alterar a data.' , 'data' => $html   ], 200);  
+
+           
+        } catch(\Illuminate\Database\QueryException $e) {
+            $msg = $e->errorInfo[1] == ErrosSQL::DELETE_OR_UPDATE_A_PARENT_ROW ? 
+                __('msg.erro_exclusao_fk', ['1' =>  $this->name  , '2' => 'Model']):
+                __('msg.erro_bd');
+            return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+        }
+       
+    }
+
+
+    
+
+    //--------------------------------------------------------------------------------------------------------------------------
+    // FIX-ME NÃO ESTA EM AJAX ...............
+    // CASO TENHA ALGUM PAGAMENTO FIADO QUITADO EM OUTRO ATENDIMENTO NÃO EXCLUI .
+    // CASO TENHA PAGAMENTOS FIADOS DE OUTROS ATENDIMENTOS QUITADOS AQUI, VOLTA A FICAR FIADO
+    //--------------------------------------------------------------------------------------------------------------------------
+
+    public function destroy($id)
+    {
+        try {
+            if(!$model = $this->model->findModelJson($id) ){
+                $msg = __('msg.erro_nao_encontrado', ['1' =>  $this->name ]);
+                return response()->json(['erro' => true , 'msg' => $msg , 'data' => null ], 200);
+            }    
+            
+            if($model->pagamentosFiadosQuitados()->count() != 0  ){
+                return response()->json(['erro' => true , 'msg' => 'Não foi possivel excluir o atendimento, ele ja tem pagamento quitados' , 'data' => null ], 200);    
+            }   
+
+            $dataPesquisar = $model->created_at ;
+
+            foreach($model->pagamentosQuitadosAqui as $pagamentoQuitados){
+                $pagamentoQuitados->restore();
+                $pagamentoQuitados->atendimento_da_quitacao()->dissociate();
+                $pagamentoQuitados->save();
+                $model->atualizarValor();
+            }              
+            foreach($model->servicos as $servico){
+                $servico->delete();
+            }
+            foreach($model->pagamentos as $pagamento){
+                $pagamento->delete();
+            }
+            foreach($model->produtos as $produto){
+                $produto->delete();
+            }
+            $delete = $model->delete();
+            
+
+            if($delete){
+                $msg2 =  "DELETEs - " . $this->name . ' apagado(a) com sucesso !! ' . $model . ' responsavel: ' . session('users') ;
+                Log::write( $this->logCannel , $msg2  ); 
+                
+                $caixa = new Caixa;
+                $caixa->data =  $dataPesquisar  ; 
+                
+                $html = (string) View::make("{$this->view}._index", compact("caixa"));    
+                $html =  preg_replace( '/\r/' , '', $html)  ; 
+                $html =  preg_replace( '/\n/' , '', $html)  ;
+                $html =  preg_replace( '/\t/' , '', $html)  ;  
+                $html =  preg_replace( '/(>)(\s+)(<)/' , '\1\3', $html)  ; 
+
+                return response()->json(['erro' =>false, 'msg' => 'Atendimento Excluido com sucesso' , 'data' =>  $html  ], 200);
+                
+            }
+            else{
+                return response()->json(['erro' => true , 'msg' => 'Não foi possivel excluir o atendimento' , 'data' => null ], 200);
+            }
+
+        } catch(\Illuminate\Database\QueryException $e) {
+            $erro = true;
+            $msg = $e->errorInfo[1] == ErrosSQL::DELETE_OR_UPDATE_A_PARENT_ROW ? 
+                __('msg.erro_exclusao_fk', ['1' =>  $this->name  , '2' => 'Model']):
+                __('msg.erro_bd');
+        }
+        return response()->json(['erro' => isset($erro), 'msg' => $msg , 'data' => null ], 200);
+    }
+
+
+
+
+
+
+
+
+
+
+    public function index(){       
+        $caixa = new Caixa;
+        $caixa->data =  today() ; 
+        return view("{$this->view}.index", compact('caixa'));
+    }
+
+
+    
     public function create($id){
         try {                      
             $cliente = Cliente::find($id); 
@@ -165,10 +354,7 @@ class AtendimentoController extends Controller  {
 
 
 
-
-
-
-
+    
 
     private function validarServicos( $servicosJson ,  $atendimento_id ){        
         $servicos = collect([]);        
@@ -248,105 +434,6 @@ class AtendimentoController extends Controller  {
 
 
 
-
-
-
-
-
-    public function index(){       
-        $caixa = new Caixa;
-        $caixa->data =  today() ; 
-        return view("{$this->view}.index", compact('caixa'));
-    }
-
-
-    public function pesquisar(Request $request){       
-        $dataForm = $request->except('_token');
-        $dataString = $dataForm['data'];
-        $data = Carbon::createFromFormat('Y-m-d', $dataString);
-        $caixa = new Caixa;
-        $caixa->data = $data ; 
-        return view("{$this->view}.index", compact('caixa'));
-    }
-
-
-    
-    public function show($id){
-        $model = $this->model->find($id);
-        if(!$model){
-            return redirect()->route("{$this->route}.index")->withErrors(['message' => __('msg.erro_nao_encontrado', ['1' => $this->name ])]);
-        } 
-        return view("{$this->view}.show", compact('model'));
-    }
-   
-
-    public function alterarData(Request $request , $id){
-        $model = $this->model->find($id);        
-        if(!$model){
-            return redirect()->route("{$this->route}.index")->withErrors(['message' => __('msg.erro_nao_encontrado', ['1' => $this->name ])]);
-        } 
-        if( $model->created_at->isToday() or Auth::user()->hasPerfil('Admin') ){
-            $data = $request->input('data');  
-            $data = $data . " 12:00:00";
-            $msg =  "ATENDIMENTO NÚMERO (ID) ". $model->id  .   " - ALTERAÇÃO DE DATA - DE " . $model->created_at . " PARA " . $data  . ' responsavel: ' . session('users') ;  
-            foreach($model->servicos as $servico){
-                $servico->created_at = $data;
-                $servico->save();
-            }
-            foreach($model->pagamentos as $pagamento){
-                $pagamento->created_at = $data;
-                $pagamento->save();                
-            }
-            foreach($model->produtos as $produto){
-                $produto->created_at = $data;
-                $produto->save();            
-            } 
-            $model->created_at = $data;    
-            $model->save();              
-            Log::write( $this->logCannel , $msg  );            
-        }        
-        return redirect()->route('atendimentos.ajax.index');
-    }
-
-
-    
-
-    //--------------------------------------------------------------------------------------------------------------------------
-    // FIX-ME NÃO ESTA EM AJAX ...............
-    // CASO TENHA ALGUM PAGAMENTO FIADO QUITADO EM OUTRO ATENDIMENTO NÃO EXCLUI .
-    // CASO TENHA PAGAMENTOS FIADOS DE OUTROS ATENDIMENTOS QUITADOS AQUI, VOLTA A FICAR FIADO
-    //--------------------------------------------------------------------------------------------------------------------------
-    public function destroySoft($id) {
-        $model = $this->model->find($id);        
-        if($model->pagamentosFiadosQuitados()->count() != 0  ){
-            return redirect()->route("{$this->route}.index");    
-        }       
-        foreach($model->pagamentosQuitadosAqui as $pagamentoQuitados){
-            $pagamentoQuitados->restore();
-            $pagamentoQuitados->atendimento_da_quitacao()->dissociate();
-            $pagamentoQuitados->save();
-            $model->atualizarValor();
-        }              
-        foreach($model->servicos as $servico){
-            $servico->delete();
-        }
-        foreach($model->pagamentos as $pagamento){
-            $pagamento->delete();
-        }
-        foreach($model->produtos as $produto){
-            $produto->delete();
-        }
-        $delete = $model->delete();
-        if($delete){
-            $msg2 =  "DELETEs - " . $this->name . ' apagado(a) com sucesso !! ' . $model . ' responsavel: ' . session('users') ;
-            Log::write( $this->logCannel , $msg2  ); 
-
-            return redirect()->route("{$this->route}.index");
-        }
-        else{
-            return  redirect()->route("{$this->route}.showApagados",['id' => $id])->withErrors(['errors' => 'Falha ao Deletar']);
-        }
-    }
 
 
 }
