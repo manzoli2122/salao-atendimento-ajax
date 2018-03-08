@@ -15,7 +15,7 @@
                     
                     <div class="box-footer align-right">  
                         <button type="button" class="btn btn-default"  onclick="modelShow( {{$model->id}} , '{{ route('clientes.ajax.index') }}' , function(data){document.getElementById('div-pagina').innerHTML = data;} )" > <i class="fa fa-reply"></i> Voltar </button> 
-                        <button class="btn btn-success" onclick="modelUpdateAjax( {{$model->id}}  , '{{ route('clientes.ajax.index') }}' )" ><i class="fa fa-check"></i> Salvar</button>
+                        <button  style="margin-left: 5px;" class="btn btn-success" onclick="modelUpdateAjax( {{$model->id}}  , '{{ route('clientes.ajax.index') }}' )" ><i class="fa fa-check"></i> Salvar</button>
                     </div>
                 </div>
             </div>

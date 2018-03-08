@@ -63,7 +63,7 @@
                                     @if($model->created_at->isToday())
                                         @permissao('atendimentos')  
                                             <a class="btn btn-warning btn-xs" data-toggle="modal" data-target="#alterarDataModal{{$model->id}}" style="margin-left: 10px;" > 
-                                                Alterar Data
+                                                <i class="fa fa-pencil"></i> Alterar Data
                                             </a>							
                                         @endpermissao		
                                         @permissao('atendimentos-soft-delete')		                                            

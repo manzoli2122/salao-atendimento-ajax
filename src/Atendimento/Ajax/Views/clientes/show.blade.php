@@ -16,23 +16,23 @@
                         </div>
                         <div class="align-right">
  
-                            <button type="button" class="btn btn-success"  onclick="modelAtender( {{$model->id}} , '{{ route('atendimentos.ajax.atender') }}')" title="Atender" remover-apos-excluir>
+                            <button  type="button" class="btn btn-success"  onclick="modelAtender( {{$model->id}} , '{{ route('atendimentos.ajax.atender') }}')" title="Atender" remover-apos-excluir>
                                 <i class="fa fa-money"></i> Atender
                             </button>
 
                             @permissao('clientes-soft-delete')
-                                <button type="button" class="btn btn-danger"  onclick="modelDelete( {{$model->id}} , '{{ route('clientes.ajax.index') }}')" remover-apos-excluir>
+                                <button style="margin-left: 5px;" type="button" class="btn btn-danger"  onclick="modelDelete( {{$model->id}} , '{{ route('clientes.ajax.index') }}')" remover-apos-excluir>
                                     <i class="fa fa-times"></i> Excluir
                                 </button>
                             @endpermissao
 
                             @permissao('clientes-editar')
-                                <button type="button" class="btn btn-info"  onclick="modelEditar( {{$model->id}} , '{{ route('clientes.ajax.index') }}' )" remover-apos-excluir  title="Editar">
+                                <button style="margin-left: 5px;" type="button" class="btn btn-info"  onclick="modelEditar( {{$model->id}} , '{{ route('clientes.ajax.index') }}' )" remover-apos-excluir  title="Editar">
                                     <i class="fa fa-pencil"></i> Editar
                                 </button>                        
                             @endpermissao
 
-                            <button type="button" class="btn btn-default"  onclick="modelVoltarIndex()" > <i class="fa fa-reply"></i> Voltar </button> 
+                            <button style="margin-left: 5px;"  type="button" class="btn btn-default"  onclick="modelVoltarIndex()" > <i class="fa fa-reply"></i> Voltar </button> 
                 
                         </div> 
                             

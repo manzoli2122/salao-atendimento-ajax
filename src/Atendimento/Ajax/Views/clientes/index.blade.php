@@ -3,11 +3,11 @@
 @section( Config::get('app.templateMasterContent' , 'content')  )
 <section class="content-header">
 	<h1>
-		<span id="div-titulo-pagina">Clientes Ajax </span>		
+		<span id="div-titulo-pagina">CLIENTES </span>		
 		<small style="float: right;">
 			@permissao('clientes-cadastrar')
 				<button class="btn btn-success btn-sm" onclick="modelCreate( '{{ route('clientes.ajax.create') }}'   )" title="Adicionar uma novo Clientes">
-					<i class="fa fa-plus"></i> Cadastrar Clientes 
+					<i class="fa fa-plus"></i><b> CADASTRAR CLIENTE </b>
 				</button>	
 			@endpermissao		
 		</small>
