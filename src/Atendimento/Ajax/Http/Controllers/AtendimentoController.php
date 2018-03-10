@@ -19,7 +19,6 @@ use Manzoli2122\Salao\Cadastro\Ajax\Models\Operadora;
 use Exception;
 
 
-use Manzoli2122\Salao\Cadastro\Http\Controllers\Padroes\Controller ;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use ChannelLog as Log;
@@ -28,10 +27,19 @@ use Auth;
 use View;
 
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
-class AtendimentoController extends Controller  {
 
+class AtendimentoController extends BaseController  {
+
+
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    
     protected $totalPage = 35;
 
     protected $model;
