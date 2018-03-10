@@ -6,7 +6,7 @@ use Manzoli2122\Salao\Atendimento\Ajax\Models\Funcionario;
 use Illuminate\Database\Eloquent\Builder;
 use DB;
 // AQUI USA DEPENDENCIA CRUZADA
-use Manzoli2122\Salao\Despesas\Models\Despesa;
+use Manzoli2122\Salao\Despesas\Ajax\Models\Despesa;
 
 class Caixa 
 {

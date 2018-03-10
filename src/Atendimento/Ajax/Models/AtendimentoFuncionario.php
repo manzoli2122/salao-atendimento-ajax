@@ -56,7 +56,7 @@ class AtendimentoFuncionario extends Model
 
 
     public function salario(){
-        return $this->belongsTo('Manzoli2122\Salao\Despesas\Models\Salario', 'salario_id');
+        return $this->belongsTo('Manzoli2122\Salao\Despesas\Ajax\Models\Salario', 'salario_id');
     }
 
 
