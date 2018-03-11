@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=7.0.0",          
-        "manzoli2122/salao-cadastro-ajax": "dev-master"
+        "manzoli2122/salao-cadastro-ajax": "1.0.0"
     },
     
     "autoload": {
@@ -27,7 +27,5 @@
             ]
             
         }
-    },
-    "minimum-stability": "dev"
-    
+    }
 }
