@@ -42,6 +42,7 @@
                     <div class="tab-pane active" id="tab_1">
                         <table class="table table-hover table-striped table-hover table-responsive">
                             <tr>
+                                @perfil('Admin') <th>ID</th>  @endperfil
                                 <th>CLIENTES</th>
                                 <th>SERVIÇOS</th>
                                 <th>PRODUTOS</th>	
@@ -50,6 +51,7 @@
                             </tr>
                             @forelse($caixa->atendimentos() as $model)				
                             <tr>
+                                @perfil('Admin') <td> {{ $model->id }}  </td>	 @endperfil
                                 <td> {{ $model->cliente->name }}  </td>			
                                 <td> R$ {{number_format($model->valorServicos(), 2 , ',' , '' )}} </td>
                                 <td> R$ {{number_format($model->valorProdutos(), 2 , ',' , '' )}} </td>			
@@ -94,6 +96,7 @@
                             @empty					
                             @endforelse	
                             <tr style="font-size: 18px;font-weight: bold;">
+                                @perfil('Admin') <td>   </td>	 @endperfil
                                 <td> TOTAL </td>	
                                 <td>  {{ $caixa->valor_servicos() }}   </td>	
                                 <td>  {{ $caixa->valor_produtos() }}  </td>	
@@ -195,6 +198,7 @@
                     <div class="tab-pane" id="despesa">
                         <table class="table table-hover table-striped table-hover table-responsive">
                             <tr>
+                                @perfil('Admin') <th>ID</th>  @endperfil
                                 <th>TIPO</th>
                                 <th>DESTINAÇÃO</th>
                                 <th>DESCRIÇÃO</th>	
@@ -203,6 +207,7 @@
                             </tr>
                             @forelse($caixa->despesas() as $model)				
                             <tr>
+                                @perfil('Admin') <td> {{ $model->id }}  </td>	 @endperfil
                                 <td> {{ $model->tipo }}  </td>			
                                 <td> {{ $model->destinacao() }} </td>
                                 <td> {{ $model->descricao }} </td>			
@@ -212,6 +217,7 @@
                             @empty					
                             @endforelse	
                             <tr style="font-size: 18px;font-weight: bold;">
+                                @perfil('Admin') <td>   </td>	 @endperfil
                                 <td> TOTAL </td>	
                                 <td>     </td>	
                                 <td>   </td>	
@@ -225,6 +231,7 @@
                     <div class="tab-pane" id="funcionario_{{$key->id}}">
                         <table class="table table-hover table-striped table-hover table-responsive">
                             <tr>
+                                @perfil('Admin') <th>ID</th>  @endperfil
                                 <th>SERVIÇO</th>
                                 <th>CLIENTE</th>
                                 <th>VALOR TOTAL</th>							
@@ -232,6 +239,7 @@
                             </tr>
                             @forelse($caixa->atendimentosFuncionario($key->id) as $model)
                                 <tr>
+                                    @perfil('Admin') <td> {{ $model->id }}  </td>	 @endperfil
                                     <td> {{ $model->servico->nome }} </td>
                                     <td> {{ $model->cliente->name }}  </td>		
                                     <td> R$ {{number_format($model->valor, 2 , ',' , '' )}} </td>		
@@ -240,6 +248,7 @@
                             @empty					
                             @endforelse	
                             <tr style="font-size: 18px;font-weight: bold;">
+                                @perfil('Admin') <td>   </td>	 @endperfil
                                 <td>   </td>			
                                 <td>TOTAL  </td>
                                 <td>{{ $caixa->atendimentosFuncionarioTotal($key->id) }}  </td>			

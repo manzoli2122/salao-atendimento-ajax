@@ -20,7 +20,8 @@
 				<div class="box-body" style="padding-top: 5px; padding-bottom: 3px;">
 					<table class="table table-bordered table-striped table-hover table-responsive" id="datatable">
 						<thead>
-							<tr>						
+							<tr>		
+								<th style="max-width:35px">ID</th>				
 								<th>Nome</th>
 								<th>Divida</th>
 								<th class="align-center" style="width:180px;min-width: 160px;">Ações</th>
@@ -48,11 +49,12 @@
 				dom: "<'row'<'col-xs-12'<'col-xs-12'f>>>"+
             		 "<'row'<'col-xs-12't>>"+
             		 "<'row'<'col-xs-12'p>>",
-				order: [[ 0, "asc" ]],
+				order: [[ 1, "asc" ]],
 				ajax: { 
 					url:'{{ route('clientes.ajax.getDatatable') }}'
 				},
 				columns: [
+					{ data: 'id', name: 'id' ,  visible: @perfil('Admin') true @else false  @endperfil },		
 					{ data: 'name', name: 'name' },				
 					{ data: 'valor', name: 'valor', searchable: false,   class: "price"},
 					{ data: 'action', name: 'action', orderable: false, searchable: false, class: 'align-center'}
