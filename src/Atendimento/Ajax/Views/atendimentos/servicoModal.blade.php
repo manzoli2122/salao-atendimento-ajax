@@ -25,7 +25,7 @@
                                     <option    value="">Selecione o Serviço</option>  
                                     @foreach ($servicos as $key )
                                         <option data-nome="{{$key->nome}}" data-valor="{{$key->valor}}" data-maximo="{{$key->desconto_maximo}}" value="{{$key->id}}">
-                                            {{ $key->nome }}
+                                            {{ $key->nome }}  R$ {{  number_format( $key->valor , 2 ,',', '') }}
                                         </option>
                                     @endforeach
                                 </select> 
