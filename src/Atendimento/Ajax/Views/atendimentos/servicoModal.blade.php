@@ -1,5 +1,5 @@
 <div class="modal fade" id="servicoModal" role="dialog" aria-labelledby="servicoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document" style="width:90%">
+    <div class="modal-dialog modal-lg" role="document" style="width:70%; margin: 30px 100px 30px auto;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
